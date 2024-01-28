@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Checkpoint-K</string>
+    <string name="app_definition">Работа на объекте</string>
+    <string name="logIn">Войти</string>
+    <string name="my_projects">Мои проекты</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="delete_project_title">Удаление проекта</string>
+    <string name="delete_project_text">Вы уверены, что хотите безвозвратно удалить проект \"%s\"?</string>
+    <string name="save">Сохранить</string>
+    <string name="project_name">Название проекта</string>
+    <string name="incorrect_project_name">Введите корректное название проекта</string>
+    <string name="repeat_project_name">Данное название проекта уже используется</string>
+    <string name="not_loaded_project_photo">Прикрепите обложку</string>
+    <string name="loaded_project_photo">Обложка прикреплена</string>
+    <string name="take_photo">Сделать снимок</string>
+    <string name="load_from_files">Загрузить файл</string>
+</resources>
