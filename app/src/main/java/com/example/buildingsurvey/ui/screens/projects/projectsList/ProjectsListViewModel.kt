@@ -25,7 +25,6 @@ class ProjectsListViewModel @Inject constructor(
             }
 
             is ProjectsAction.UpdateProject -> repository.currentProject = action.project
-
         }
     }
 }

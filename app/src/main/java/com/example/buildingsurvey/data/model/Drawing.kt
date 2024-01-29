@@ -5,5 +5,6 @@ import java.util.UUID
 data class Drawing (
     val id: String = UUID.randomUUID().toString(),
     var name: String = "",
+    var drawingFilePath: String = "",
     var projectId: String = ""
 )

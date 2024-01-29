@@ -11,3 +11,11 @@ object ProjectsList : Destination {
 object AddProject : Destination {
     override val route: String = "addProject"
 }
+
+object DrawingsList : Destination {
+    override val route: String = "drawingsList"
+}
+
+object AddDrawing : Destination {
+    override val route: String = "addDrawing"
+}

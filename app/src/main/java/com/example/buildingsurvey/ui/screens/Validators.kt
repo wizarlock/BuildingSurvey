@@ -4,4 +4,4 @@ import com.example.buildingsurvey.data.model.Project
 
 fun isValidProjectOrDrawingName(name: String) = name.isNotEmpty()
 
-fun isNotRepeatProjectOrDrawingName(name: String, list: List<Project>) = !list.any { it.name == name }
+fun isNotRepeatProjectOrDrawingName(name: String, list: List<String>) = !list.any { it == name }

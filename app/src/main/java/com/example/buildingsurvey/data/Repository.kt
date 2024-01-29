@@ -8,6 +8,7 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.os.Environment
 import android.webkit.MimeTypeMap
+import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Project
 import dagger.hilt.android.qualifiers.ApplicationContext
 import id.zelory.compressor.Compressor
@@ -27,10 +28,13 @@ class Repository @Inject constructor(
     @ApplicationContext private val applicationContext: Context
 ) : RepositoryInterface {
     private val _projectsList: MutableStateFlow<List<Project>> = MutableStateFlow(listOf())
+    private val _drawingsList: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf())
+    override val projectsList = _projectsList.asStateFlow()
+    override val drawingsList = _drawingsList.asStateFlow()
+    override var currentProject = Project()
+
     private var tempFile: File? = null
     private val outputDir = applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-    override val projectsList = _projectsList.asStateFlow()
-    override var currentProject = Project()
 
     override suspend fun addProject(project: Project, isFileExists: Boolean) {
         if (isFileExists) {
@@ -110,4 +114,20 @@ class Repository @Inject constructor(
         }
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, Matrix().apply { postRotate(rotationAngle.toFloat()) }, true)
     }
+
+    override suspend fun addDrawing(drawing: Drawing) {
+        _drawingsList.update { currentList ->
+            val updatedList = currentList.toMutableList()
+            updatedList.add(drawing)
+            updatedList.toList()
+        }
+    }
+
+    override suspend fun removeDrawing(drawing: Drawing) {
+        _drawingsList.update { currentList ->
+            currentList.filterNot { it == drawing }
+        }
+    }
+
+
 }

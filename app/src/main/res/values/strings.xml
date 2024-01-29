@@ -15,4 +15,9 @@
     <string name="loaded_project_photo">Обложка прикреплена</string>
     <string name="take_photo">Сделать снимок</string>
     <string name="load_from_files">Загрузить файл</string>
+    <string name="select_drawing">Выбрать чертеж</string>
+    <string name="drawings_empty">В проекте нет чертежей</string>
+    <string name="add_drawing">Добавить чертеж</string>
+    <string name="project_settings">Настройки проекта</string>
+    <string name="record_context">Запись контекста</string>
 </resources>

@@ -65,7 +65,7 @@ class AddProjectViewModel @Inject constructor(
 
         val isNotRepeatProjectName = isNotRepeatProjectOrDrawingName(
             name = uiState.value.projectName,
-            list = repository.projectsList.value
+            list = repository.projectsList.value.map { it.name }
         )
 
         _uiState.update {
