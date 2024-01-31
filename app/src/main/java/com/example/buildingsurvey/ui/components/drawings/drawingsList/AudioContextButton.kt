@@ -1,7 +1,6 @@
 package com.example.buildingsurvey.ui.components.drawings.drawingsList
 
 import android.Manifest
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -16,14 +15,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.buildingsurvey.R
-import com.example.buildingsurvey.ui.screens.drawings.drawingsList.DrawingsListUiState
-import com.example.buildingsurvey.ui.screens.drawings.drawingsList.actions.DrawingsListAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
