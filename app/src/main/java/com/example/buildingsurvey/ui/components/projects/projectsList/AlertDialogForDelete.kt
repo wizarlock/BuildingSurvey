@@ -12,14 +12,15 @@ import com.example.buildingsurvey.R
 fun AlertDialogForDelete(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
-    projectName: String
+    title: String,
+    text: String
 ) {
     AlertDialog(
         title = {
-            Text(text = stringResource(id = R.string.delete_project_title))
+            Text(text = title)
         },
         text = {
-            Text(text = stringResource(id = R.string.delete_project_text, projectName))
+            Text(text = text)
         },
         onDismissRequest = {
             onDismissRequest()

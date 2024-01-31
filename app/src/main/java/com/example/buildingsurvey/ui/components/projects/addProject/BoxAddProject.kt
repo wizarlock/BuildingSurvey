@@ -67,7 +67,9 @@ fun BoxAddProject(
             modifier = Modifier.padding(10.dp)
         ) {
             DefaultButton(
-                text = stringResource(id = R.string.save), onSavingClick
+                text = stringResource(id = R.string.save),
+                minWidth = 240.dp,
+                onClick = onSavingClick
             )
         }
     }

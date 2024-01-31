@@ -80,6 +80,7 @@ fun ProjectsListScreen(
                 viewModel.onUiAction(ProjectsAction.DeleteProject(project = projectForDelete.value!!))
                 openDialog.value = false
             },
-            projectName = projectForDelete.value!!.name
+            title = stringResource(id = R.string.delete_project_title),
+            text = stringResource(id = R.string.delete_project_text, projectForDelete.value!!.name)
         )
 }

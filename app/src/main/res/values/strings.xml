@@ -20,4 +20,16 @@
     <string name="add_drawing">Добавить чертеж</string>
     <string name="project_settings">Настройки проекта</string>
     <string name="record_context">Запись контекста</string>
+    <string name="incorrect_drawing_name">Введите корректное название чертежа</string>
+    <string name="repeat_drawing_name">Данное название чертежа уже используется</string>
+    <string name="drawing_name">Название чертежа</string>
+    <string name="loaded_drawing">Чертеж прикреплен</string>
+    <string name="attach_drawing">Прикрепите чертеж</string>
+    <string name="incorrect_drawing_file">Прикрепите один .pdf файл</string>
+    <string name="delete_drawing_title">Удаление чертежа</string>
+    <string name="delete_drawing_text">Вы уверены, что хотите безвозвратно удалить чертеж \"%s\"?</string>
+    <string name="audio_start">Аудиозапись начата!</string>
+    <string name="audio_stop">Аудиозапись успешно сохранена!</string>
+    <string name="audio_mode_on">стоп</string>
+    <string name="audio_mode_off">старт</string>
 </resources>

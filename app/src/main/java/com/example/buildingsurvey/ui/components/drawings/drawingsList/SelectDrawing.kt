@@ -3,6 +3,7 @@ package com.example.buildingsurvey.ui.components.drawings.drawingsList
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
@@ -58,7 +59,9 @@ fun SelectDrawing(
                     unfocusedBorderColor = Color.Black
                 ),
                 textStyle = TextStyle(fontSize = 18.sp),
-                modifier = Modifier.menuAnchor()
+                modifier = Modifier
+                    .widthIn(min = 300.dp)
+                    .menuAnchor()
             )
             ExposedDropdownMenu(
                 expanded = expanded && list.isNotEmpty(),
