@@ -10,11 +10,13 @@ import com.example.buildingsurvey.data.navigation.AddProject
 import com.example.buildingsurvey.data.navigation.DrawingsList
 import com.example.buildingsurvey.data.navigation.ProjectsList
 import com.example.buildingsurvey.data.navigation.Start
+import com.example.buildingsurvey.data.navigation.WorkWithDrawing
 import com.example.buildingsurvey.ui.screens.drawings.addDrawing.AddDrawingScreen
 import com.example.buildingsurvey.ui.screens.drawings.drawingsList.DrawingsListScreen
 import com.example.buildingsurvey.ui.screens.projects.addProject.AddProjectScreen
 import com.example.buildingsurvey.ui.screens.projects.projectsList.ProjectsListScreen
 import com.example.buildingsurvey.ui.screens.start.StartScreen
+import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingScreen
 
 @Composable
 fun AppNavHost(
@@ -40,6 +42,9 @@ fun AppNavHost(
         }
         composable(AddDrawing.route) {
             AddDrawingScreen(navController = navController)
+        }
+        composable(WorkWithDrawing.route) {
+            WorkWithDrawingScreen(navController = navController)
         }
     }
 }

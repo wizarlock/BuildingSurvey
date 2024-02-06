@@ -19,3 +19,7 @@ object DrawingsList : Destination {
 object AddDrawing : Destination {
     override val route: String = "addDrawing"
 }
+
+object WorkWithDrawing : Destination {
+    override val route: String = "workWithDrawing"
+}

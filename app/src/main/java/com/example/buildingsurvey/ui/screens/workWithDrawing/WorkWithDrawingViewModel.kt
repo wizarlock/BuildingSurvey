@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.screens.drawings.drawingsList
+package com.example.buildingsurvey.ui.screens.workWithDrawing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +7,7 @@ import com.example.buildingsurvey.data.datastore.DataStoreManager
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Project
 import com.example.buildingsurvey.ui.screens.AudioAttachment
-import com.example.buildingsurvey.ui.screens.drawings.drawingsList.actions.DrawingsListAction
+import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,23 +21,25 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DrawingsListViewModel @Inject constructor(
+class WorkWithDrawingViewModel @Inject constructor(
     private val repository: RepositoryInterface,
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(DrawingsListUiState())
+    private val _uiState = MutableStateFlow(WorkWithDrawingUiState())
     val uiState = _uiState.asStateFlow()
     private var project = Project()
+    private var drawing = Drawing()
 
     init {
         viewModelScope.launch {
             project = repository.currentProject
+            drawing = repository.currentDrawing
             _uiState.update {
                 uiState.value.copy(
-                    projectName = project.name,
                     drawings = repository.drawingsList.map { drawings ->
                         drawings.filter { it.projectId == project.id }
-                    }.stateIn(viewModelScope)
+                    }.stateIn(viewModelScope),
+                    drawingFilePath = drawing.drawingFilePath
                 )
             }
             viewModelScope.launch {
@@ -52,16 +54,9 @@ class DrawingsListViewModel @Inject constructor(
         }
     }
 
-    fun onUiAction(action: DrawingsListAction) {
+    fun onUiAction(action: WorkWithDrawingAction) {
         when (action) {
-            is DrawingsListAction.DeleteDrawing -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    repository.removeDrawing(action.drawing)
-                }
-            }
-
-            is DrawingsListAction.UpdateDrawing -> repository.currentDrawing = action.drawing
-            is DrawingsListAction.UpdateAudioNum -> {
+            is WorkWithDrawingAction.UpdateAudioNum -> {
                 _uiState.update {
                     uiState.value.copy(
                         audioNum = action.num
@@ -72,13 +67,13 @@ class DrawingsListViewModel @Inject constructor(
                 }
             }
 
-            is DrawingsListAction.StartRecord -> {
+            is WorkWithDrawingAction.StartRecord -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     repository.startRecording(action.name, AudioAttachment.ToProject)
                 }
             }
 
-            DrawingsListAction.StopRecord -> {
+            WorkWithDrawingAction.StopRecord -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     repository.stopRecording()
                 }
@@ -87,9 +82,9 @@ class DrawingsListViewModel @Inject constructor(
     }
 }
 
-data class DrawingsListUiState(
+data class WorkWithDrawingUiState(
     private val _drawings: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf()),
-    val projectName: String = "",
     val drawings: StateFlow<List<Drawing>> = _drawings.asStateFlow(),
-    val audioNum: Int = 0
+    val audioNum: Int = 0,
+    val drawingFilePath: String = ""
 )

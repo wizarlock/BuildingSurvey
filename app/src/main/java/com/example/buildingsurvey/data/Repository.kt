@@ -186,7 +186,7 @@ class Repository @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun startRecording(name: String, attachment: AudioAttachment) {
         val outputFilePath = outputDir.toString() + "/" + "$name.3gp"
-        val audio = if (attachment == AudioAttachment.ProjectAttachment)
+        val audio = if (attachment == AudioAttachment.ToProject)
             Audio(name = name, audioFilePath = outputFilePath, projectId = currentProject.id)
         else Audio(name = name, audioFilePath = outputFilePath, drawingId = currentDrawing.id)
         addRecording(audio)

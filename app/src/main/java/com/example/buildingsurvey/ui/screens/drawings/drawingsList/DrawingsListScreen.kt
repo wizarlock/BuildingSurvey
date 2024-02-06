@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.example.buildingsurvey.R
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.navigation.AddDrawing
+import com.example.buildingsurvey.data.navigation.WorkWithDrawing
 import com.example.buildingsurvey.ui.components.drawings.drawingsList.ActionButtonsForDrawingsList
 import com.example.buildingsurvey.ui.components.drawings.drawingsList.BotDrawingBar
 import com.example.buildingsurvey.ui.components.drawings.drawingsList.SelectDrawing
@@ -79,7 +80,10 @@ fun DrawingsListScreen(
                 )
                 SelectDrawing(
                     list = uiState.drawings.collectAsState().value,
-                    onDrawingClick = { },
+                    onDrawingClick = { drawing ->
+                        viewModel.onUiAction(DrawingsListAction.UpdateDrawing(drawing = drawing))
+                        navController.navigate(WorkWithDrawing.route)
+                    },
                     onCloseClick = { drawing ->
                         drawingForDelete.value = drawing
                         openDialog.value = true
