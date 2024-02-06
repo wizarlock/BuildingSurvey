@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.buildingsurvey.data.RepositoryInterface
 import com.example.buildingsurvey.data.datastore.DataStoreManager
 import com.example.buildingsurvey.data.model.Drawing
-import com.example.buildingsurvey.data.model.Project
 import com.example.buildingsurvey.ui.screens.AudioAttachment
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,29 +26,35 @@ class WorkWithDrawingViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(WorkWithDrawingUiState())
     val uiState = _uiState.asStateFlow()
-    private var project = Project()
-    private var drawing = Drawing()
 
     init {
         viewModelScope.launch {
-            project = repository.currentProject
-            drawing = repository.currentDrawing
             _uiState.update {
                 uiState.value.copy(
                     drawings = repository.drawingsList.map { drawings ->
-                        drawings.filter { it.projectId == project.id }
-                    }.stateIn(viewModelScope),
-                    drawingFilePath = drawing.drawingFilePath
+                        drawings.filter { it.projectId == repository.currentProject.id }
+                    }.stateIn(viewModelScope)
                 )
             }
-            viewModelScope.launch {
-                dataStoreManager.userPreferences.collectLatest { userPref ->
-                    _uiState.update {
-                        uiState.value.copy(
-                            audioNum = userPref.audioNum
-                        )
-                    }
+        }
+        viewModelScope.launch {
+            dataStoreManager.userPreferences.collectLatest { userPref ->
+                _uiState.update {
+                    uiState.value.copy(
+                        audioNum = userPref.audioNum
+                    )
                 }
+            }
+        }
+        initDrawing()
+    }
+
+    private fun initDrawing() {
+        viewModelScope.launch {
+            _uiState.update {
+                uiState.value.copy(
+                    currentDrawing = repository.currentDrawing,
+                )
             }
         }
     }
@@ -73,6 +78,12 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
+            is WorkWithDrawingAction.UpdateDrawing -> {
+                repository.currentDrawing = action.drawing
+                initDrawing()
+            }
+
+
             WorkWithDrawingAction.StopRecord -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     repository.stopRecording()
@@ -86,5 +97,5 @@ data class WorkWithDrawingUiState(
     private val _drawings: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf()),
     val drawings: StateFlow<List<Drawing>> = _drawings.asStateFlow(),
     val audioNum: Int = 0,
-    val drawingFilePath: String = ""
+    var currentDrawing: Drawing = Drawing(),
 )

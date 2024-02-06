@@ -23,7 +23,7 @@ fun DrawingImage(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(
-                    uiState.drawingFilePath
+                    uiState.currentDrawing.drawingFilePath
                 )
                 .size(Size.ORIGINAL)
                 .build(),

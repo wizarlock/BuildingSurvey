@@ -21,7 +21,7 @@ import com.example.buildingsurvey.ui.components.workWithDrawing.TopAppBarForWork
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 
 @Composable
-fun WorkWithDrawingScreen (
+fun WorkWithDrawingScreen(
     navController: NavController
 ) {
     val viewModel: WorkWithDrawingViewModel = hiltViewModel()
@@ -32,17 +32,22 @@ fun WorkWithDrawingScreen (
 
     Scaffold(
         topBar = {
-           TopAppBarForWorkWithDrawing(
-               startRecord = {
-                   Toast.makeText(context, start, Toast.LENGTH_SHORT).show()
-                   viewModel.onUiAction(WorkWithDrawingAction.StartRecord(uiState.audioNum.toString()))
-                   viewModel.onUiAction(WorkWithDrawingAction.UpdateAudioNum(uiState.audioNum + 1))
-               },
-               stopRecord = {
-                   Toast.makeText(context, stop, Toast.LENGTH_SHORT).show()
-                   viewModel.onUiAction(WorkWithDrawingAction.StopRecord)
-               }
-           )
+            TopAppBarForWorkWithDrawing(
+                selectDrawing = { drawing ->
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateDrawing(drawing))
+                },
+                currentDrawing = uiState.currentDrawing,
+                listOfDrawings = uiState.drawings.collectAsState().value,
+                startRecord = {
+                    Toast.makeText(context, start, Toast.LENGTH_SHORT).show()
+                    viewModel.onUiAction(WorkWithDrawingAction.StartRecord(uiState.audioNum.toString()))
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateAudioNum(uiState.audioNum + 1))
+                },
+                stopRecord = {
+                    Toast.makeText(context, stop, Toast.LENGTH_SHORT).show()
+                    viewModel.onUiAction(WorkWithDrawingAction.StopRecord)
+                }
+            )
         },
 
         bottomBar = {
@@ -50,7 +55,7 @@ fun WorkWithDrawingScreen (
         }
     )
     { paddingValues ->
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)

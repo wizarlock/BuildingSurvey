@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.BackIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.ExportIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.ForwardIcon
@@ -18,6 +19,9 @@ import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.S
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarForWorkWithDrawing(
+    selectDrawing: (Drawing) -> Unit,
+    currentDrawing: Drawing,
+    listOfDrawings: List<Drawing>,
     startRecord: () -> Unit,
     stopRecord: () -> Unit
 ) {
@@ -29,7 +33,13 @@ fun TopAppBarForWorkWithDrawing(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                SelectIcon()
+                SelectIcon(
+                    selectDrawing = { drawing ->
+                        selectDrawing(drawing)
+                    },
+                    currentDrawing = currentDrawing,
+                    listOfDrawings = listOfDrawings
+                )
                 BackIcon()
                 ForwardIcon()
                 RecordAudioIcon(
@@ -40,7 +50,6 @@ fun TopAppBarForWorkWithDrawing(
                 ReturnBackIcon()
                 ExportIcon()
             }
-
         }
     )
 }
