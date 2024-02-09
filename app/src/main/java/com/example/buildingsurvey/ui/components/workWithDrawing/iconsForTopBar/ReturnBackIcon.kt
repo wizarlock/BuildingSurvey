@@ -10,9 +10,11 @@ import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
 
 @Composable
-fun ReturnBackIcon() {
+fun ReturnBackIcon(
+    returnBackScale: () -> Unit
+) {
     IconButton(
-        onClick = {  }
+        onClick = { returnBackScale() }
     ) {
         Icon(
             painter = painterResource(id = R.drawable.return_back),

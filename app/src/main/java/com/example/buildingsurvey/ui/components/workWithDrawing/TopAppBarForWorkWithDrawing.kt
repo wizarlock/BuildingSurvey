@@ -23,7 +23,9 @@ fun TopAppBarForWorkWithDrawing(
     currentDrawing: Drawing,
     listOfDrawings: List<Drawing>,
     startRecord: () -> Unit,
-    stopRecord: () -> Unit
+    stopRecord: () -> Unit,
+    updatePhotoMode: () -> Unit,
+    returnBackScale: () -> Unit
 ) {
     TopAppBar(
         title = {},
@@ -46,8 +48,12 @@ fun TopAppBarForWorkWithDrawing(
                     startRecord = { startRecord() },
                     stopRecord = { stopRecord() }
                 )
-                PhotoIcon()
-                ReturnBackIcon()
+                PhotoIcon(
+                    updatePhotoMode = { updatePhotoMode() }
+                )
+                ReturnBackIcon(
+                    returnBackScale = { returnBackScale() }
+                )
                 ExportIcon()
             }
         }

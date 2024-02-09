@@ -83,10 +83,37 @@ class WorkWithDrawingViewModel @Inject constructor(
                 initDrawing()
             }
 
+            is WorkWithDrawingAction.UpdateScaleAndOffset -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        offsetX = uiState.value.offsetX + action.pan.x,
+                        offsetY = uiState.value.offsetY + action.pan.y,
+                        scale = uiState.value.scale * action.zoom
+                    )
+                }
+            }
 
             WorkWithDrawingAction.StopRecord -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     repository.stopRecording()
+                }
+            }
+
+            WorkWithDrawingAction.UpdatePhotoMode -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        photoMode = !uiState.value.photoMode
+                    )
+                }
+            }
+
+            WorkWithDrawingAction.ReturnBackScaleAndOffset -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        offsetX = 0f,
+                        offsetY = 0f,
+                        scale = 1f
+                    )
                 }
             }
         }
@@ -97,5 +124,9 @@ data class WorkWithDrawingUiState(
     private val _drawings: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf()),
     val drawings: StateFlow<List<Drawing>> = _drawings.asStateFlow(),
     val audioNum: Int = 0,
-    var currentDrawing: Drawing = Drawing(),
+    val photoMode: Boolean = false,
+    val scale: Float = 1f,
+    val offsetX: Float = 0f,
+    val offsetY: Float = 0f,
+    var currentDrawing: Drawing = Drawing()
 )

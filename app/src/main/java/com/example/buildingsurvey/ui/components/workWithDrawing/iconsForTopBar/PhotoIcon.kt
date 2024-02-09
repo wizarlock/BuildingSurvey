@@ -14,10 +14,13 @@ import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
 
 @Composable
-fun PhotoIcon() {
+fun PhotoIcon(
+    updatePhotoMode: () -> Unit
+) {
     var counter by remember { mutableStateOf(0) }
     IconButton(
         onClick = {
+            updatePhotoMode()
             counter++
         }
     ) {

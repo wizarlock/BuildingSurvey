@@ -16,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.buildingsurvey.R
 import com.example.buildingsurvey.ui.components.workWithDrawing.BotAppBarWorkWithDrawing
-import com.example.buildingsurvey.ui.components.workWithDrawing.DrawingImage
+import com.example.buildingsurvey.ui.components.workWithDrawing.drawingImage.DrawingImage
 import com.example.buildingsurvey.ui.components.workWithDrawing.TopAppBarForWorkWithDrawing
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 
@@ -46,6 +46,12 @@ fun WorkWithDrawingScreen(
                 stopRecord = {
                     Toast.makeText(context, stop, Toast.LENGTH_SHORT).show()
                     viewModel.onUiAction(WorkWithDrawingAction.StopRecord)
+                },
+                updatePhotoMode =  {
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdatePhotoMode)
+                },
+                returnBackScale = {
+                    viewModel.onUiAction(WorkWithDrawingAction.ReturnBackScaleAndOffset)
                 }
             )
         },
@@ -62,7 +68,8 @@ fun WorkWithDrawingScreen(
                 .padding(top = 16.dp, bottom = 16.dp)
         ) {
             DrawingImage(
-                uiState = uiState
+                uiState = uiState,
+                uiAction = viewModel::onUiAction
             )
         }
     }
