@@ -5,31 +5,28 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
+import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RecordAudioIcon(
+    uiState: WorkWithDrawingUiState,
     startRecord: () -> Unit,
     stopRecord: () -> Unit
 ) {
-    var counter by remember { mutableStateOf(0) }
     val permissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
 
     IconButton(
         onClick = {
             if (permissionState.hasPermission) {
-                counter++
-                if (counter % 2 != 0) {
+
+                if (!uiState.audioMode) {
                     startRecord()
                 } else {
                     stopRecord()
@@ -40,7 +37,7 @@ fun RecordAudioIcon(
         }
     ) {
         Image(
-            painter = if (counter % 2 == 0) painterResource(id = R.drawable.audio_off)
+            painter = if (!uiState.audioMode) painterResource(id = R.drawable.audio_off)
             else painterResource(id = R.drawable.audio_on),
             contentDescription = "RecordAudio",
             modifier = Modifier

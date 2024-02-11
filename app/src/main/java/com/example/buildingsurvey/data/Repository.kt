@@ -17,6 +17,7 @@ import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
 import com.example.buildingsurvey.data.model.Audio
 import com.example.buildingsurvey.data.model.Drawing
+import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
 import com.example.buildingsurvey.ui.screens.AudioAttachment
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -39,11 +40,14 @@ class Repository @Inject constructor(
     private val _projectsList: MutableStateFlow<List<Project>> = MutableStateFlow(listOf())
     private val _audioList: MutableStateFlow<List<Audio>> = MutableStateFlow(listOf())
     private val _drawingsList: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf())
+    private val _labelsList: MutableStateFlow<List<Label>> = MutableStateFlow(listOf())
     private var recorder: MediaRecorder? = null
 
     override val projectsList = _projectsList.asStateFlow()
     override val drawingsList = _drawingsList.asStateFlow()
     override val audioList = _audioList.asStateFlow()
+    override val labelsList = _labelsList.asStateFlow()
+
     override var currentProject = Project()
     override var currentDrawing = Drawing()
 
@@ -153,11 +157,10 @@ class Repository @Inject constructor(
     }
 
     private fun saveDrawingFile(fileName: String) {
-        val parcelFileDescriptor =
-            ParcelFileDescriptor.open(tempFile, ParcelFileDescriptor.MODE_READ_ONLY)
-        val pdfRenderer = PdfRenderer(parcelFileDescriptor)
-        val pdfPage: PdfRenderer.Page = pdfRenderer.openPage(0)
-        val bitmap: Bitmap =
+        val pdfRenderer =
+            PdfRenderer(ParcelFileDescriptor.open(tempFile, ParcelFileDescriptor.MODE_READ_ONLY))
+        val pdfPage = pdfRenderer.openPage(0)
+        val bitmap  =
             Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         canvas.drawColor(Color.WHITE)
@@ -173,13 +176,50 @@ class Repository @Inject constructor(
     private fun saveBitmapToFile(bitmap: Bitmap, outputFile: File) {
         val outputStream = FileOutputStream(outputFile)
         outputStream.use { outputStream ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         }
     }
 
     override suspend fun removeDrawing(drawing: Drawing) {
         _drawingsList.update { currentList ->
             currentList.filterNot { it == drawing }
+        }
+    }
+
+    override suspend fun addLabel(x: Float, y: Float, name: String, width: Float, height: Float) {
+        val fileName = "$name.jpg"
+        val widthAndHeight = saveLabelFile(fileName)
+
+        val label = Label(
+            name = name,
+            labelFilePath = "$outputDir/$fileName",
+            drawingId = currentDrawing.id,
+            xInApp = x,
+            yInApp = y,
+            xReal = (widthAndHeight.first / width) * x,
+            yReal = (widthAndHeight.second / height) * y
+        )
+
+        _labelsList.update { currentList ->
+            val updatedList = currentList.toMutableList()
+            updatedList.add(label)
+            updatedList.toList()
+        }
+    }
+
+    private fun saveLabelFile(fileName: String): Pair<Int, Int> {
+        val outputFile = File(outputDir, fileName)
+        FileUtils.copyFile(tempFile, outputFile)
+        tempFile!!.delete()
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(currentDrawing.drawingFilePath, options)
+        return Pair(options.outWidth, options.outHeight)
+    }
+
+    override suspend fun removeLabel(label: Label) {
+        _labelsList.update { currentList ->
+            currentList.filterNot { it == label }
         }
     }
 

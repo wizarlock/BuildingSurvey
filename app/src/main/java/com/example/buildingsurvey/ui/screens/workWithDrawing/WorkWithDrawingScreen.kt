@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.buildingsurvey.R
@@ -33,7 +32,9 @@ fun WorkWithDrawingScreen(
     Scaffold(
         topBar = {
             TopAppBarForWorkWithDrawing(
+                uiState = uiState,
                 selectDrawing = { drawing ->
+                    if (uiState.audioMode) Toast.makeText(context, stop, Toast.LENGTH_SHORT).show()
                     viewModel.onUiAction(WorkWithDrawingAction.UpdateDrawing(drawing))
                 },
                 currentDrawing = uiState.currentDrawing,
@@ -65,7 +66,6 @@ fun WorkWithDrawingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(top = 16.dp, bottom = 16.dp)
         ) {
             DrawingImage(
                 uiState = uiState,

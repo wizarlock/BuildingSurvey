@@ -14,15 +14,20 @@ fun boxForAllModifier(
     photoMode: Boolean,
     uiAction: (WorkWithDrawingAction) -> Unit
 ): Modifier {
-    val alwaysBoxModifier = Modifier
+    val defaultBoxModifier = Modifier
         .fillMaxSize()
         .background(Color.White)
 
     return if (!photoMode) {
-        alwaysBoxModifier.pointerInput(Unit) {
+        defaultBoxModifier.pointerInput(Unit) {
             detectTransformGestures { _, pan, zoom, _ ->
-                uiAction(WorkWithDrawingAction.UpdateScaleAndOffset(pan = pan, zoom = zoom))
+                uiAction(
+                    WorkWithDrawingAction.UpdateScaleAndOffset(
+                        pan = pan,
+                        zoom = zoom
+                    )
+                )
             }
         }
-    } else alwaysBoxModifier
+    } else defaultBoxModifier
 }

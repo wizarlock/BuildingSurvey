@@ -15,10 +15,12 @@ import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.P
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.RecordAudioIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.ReturnBackIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.SelectIcon
+import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarForWorkWithDrawing(
+    uiState: WorkWithDrawingUiState,
     selectDrawing: (Drawing) -> Unit,
     currentDrawing: Drawing,
     listOfDrawings: List<Drawing>,
@@ -46,10 +48,12 @@ fun TopAppBarForWorkWithDrawing(
                 ForwardIcon()
                 RecordAudioIcon(
                     startRecord = { startRecord() },
-                    stopRecord = { stopRecord() }
+                    stopRecord = { stopRecord() },
+                    uiState = uiState
                 )
                 PhotoIcon(
-                    updatePhotoMode = { updatePhotoMode() }
+                    uiState = uiState,
+                    updatePhotoMode = updatePhotoMode
                 )
                 ReturnBackIcon(
                     returnBackScale = { returnBackScale() }

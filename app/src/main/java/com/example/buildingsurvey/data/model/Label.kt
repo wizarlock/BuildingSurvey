@@ -7,6 +7,8 @@ data class Label (
     var name: String = "",
     var labelFilePath: String = "",
     var drawingId: String = "",
-    var x: Float = 0f,
-    var y: Float = 0f
+    var xInApp: Float = 0f,
+    var yInApp: Float = 0f,
+    var xReal: Float = 0f,
+    var yReal: Float = 0f
 )

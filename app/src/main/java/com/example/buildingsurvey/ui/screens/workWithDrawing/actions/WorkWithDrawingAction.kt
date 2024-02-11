@@ -18,4 +18,6 @@ sealed class WorkWithDrawingAction {
     object ReturnBackScaleAndOffset: WorkWithDrawingAction()
 
     data class UpdateAudioNum(val num: Int) : WorkWithDrawingAction()
+
+    data class CreateLabel(val path: String, val x: Float, val y: Float, val width: Float, val height: Float,) : WorkWithDrawingAction()
 }

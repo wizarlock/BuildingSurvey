@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.buildingsurvey.data.RepositoryInterface
 import com.example.buildingsurvey.data.datastore.DataStoreManager
 import com.example.buildingsurvey.data.model.Drawing
+import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.ui.screens.AudioAttachment
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,10 +38,12 @@ class WorkWithDrawingViewModel @Inject constructor(
                 )
             }
         }
+
         viewModelScope.launch {
             dataStoreManager.userPreferences.collectLatest { userPref ->
                 _uiState.update {
                     uiState.value.copy(
+                        photoNum = userPref.photoNum,
                         audioNum = userPref.audioNum
                     )
                 }
@@ -54,6 +57,14 @@ class WorkWithDrawingViewModel @Inject constructor(
             _uiState.update {
                 uiState.value.copy(
                     currentDrawing = repository.currentDrawing,
+                    labels = repository.labelsList.map { labels ->
+                        labels.filter { it.drawingId == repository.currentDrawing.id }
+                    }.stateIn(viewModelScope),
+                    photoMode = false,
+                    audioMode = false,
+                    scale = 1f,
+                    offsetX = 0f,
+                    offsetY = 0f
                 )
             }
         }
@@ -74,11 +85,17 @@ class WorkWithDrawingViewModel @Inject constructor(
 
             is WorkWithDrawingAction.StartRecord -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    repository.startRecording(action.name, AudioAttachment.ToProject)
+                    _uiState.update {
+                        uiState.value.copy(
+                            audioMode = true
+                        )
+                    }
+                    repository.startRecording(action.name, AudioAttachment.ToDrawing)
                 }
             }
 
             is WorkWithDrawingAction.UpdateDrawing -> {
+                if (uiState.value.audioMode) onUiAction(WorkWithDrawingAction.StopRecord)
                 repository.currentDrawing = action.drawing
                 initDrawing()
             }
@@ -95,6 +112,11 @@ class WorkWithDrawingViewModel @Inject constructor(
 
             WorkWithDrawingAction.StopRecord -> {
                 viewModelScope.launch(Dispatchers.IO) {
+                    _uiState.update {
+                        uiState.value.copy(
+                            audioMode = false
+                        )
+                    }
                     repository.stopRecording()
                 }
             }
@@ -116,15 +138,43 @@ class WorkWithDrawingViewModel @Inject constructor(
                     )
                 }
             }
+
+            is WorkWithDrawingAction.CreateLabel -> {
+                viewModelScope.launch {
+                    val isFileExists = repository.takePhoto(photoPath = action.path)
+                    if (isFileExists) {
+                        val newPhotoNum = uiState.value.photoNum + 1
+                        _uiState.update {
+                            uiState.value.copy(
+                                photoNum = newPhotoNum
+                            )
+                        }
+                        dataStoreManager.updatePhotoNum(newPhotoNum)
+                        repository.addLabel(
+                            x = action.x,
+                            y = action.y,
+                            name = newPhotoNum.toString(),
+                            width = action.width,
+                            height = action.height
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
+
 data class WorkWithDrawingUiState(
     private val _drawings: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf()),
+    private val _labels: MutableStateFlow<List<Label>> = MutableStateFlow(listOf()),
+
     val drawings: StateFlow<List<Drawing>> = _drawings.asStateFlow(),
+    val labels: StateFlow<List<Label>> = _labels.asStateFlow(),
     val audioNum: Int = 0,
+    val photoNum: Int = 0,
     val photoMode: Boolean = false,
+    val audioMode: Boolean = false,
     val scale: Float = 1f,
     val offsetX: Float = 0f,
     val offsetY: Float = 0f,

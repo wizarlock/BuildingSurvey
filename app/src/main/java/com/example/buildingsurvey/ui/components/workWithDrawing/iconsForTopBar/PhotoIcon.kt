@@ -4,28 +4,24 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
+import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @Composable
 fun PhotoIcon(
-    updatePhotoMode: () -> Unit
+    updatePhotoMode: () -> Unit,
+    uiState: WorkWithDrawingUiState
 ) {
-    var counter by remember { mutableStateOf(0) }
     IconButton(
         onClick = {
             updatePhotoMode()
-            counter++
         }
     ) {
         Image(
-            painter = if (counter % 2 == 0) painterResource(id = R.drawable.take_photo_off)
+            painter = if (!uiState.photoMode) painterResource(id = R.drawable.take_photo_off)
             else painterResource(id = R.drawable.take_photo_on),
             contentDescription = "Photo",
             modifier = Modifier
