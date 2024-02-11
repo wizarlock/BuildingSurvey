@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.buildingsurvey.R
+import com.example.buildingsurvey.data.navigation.UpdateLabel
 import com.example.buildingsurvey.ui.components.workWithDrawing.BotAppBarWorkWithDrawing
 import com.example.buildingsurvey.ui.components.workWithDrawing.drawingImage.DrawingImage
 import com.example.buildingsurvey.ui.components.workWithDrawing.TopAppBarForWorkWithDrawing
@@ -69,7 +70,11 @@ fun WorkWithDrawingScreen(
         ) {
             DrawingImage(
                 uiState = uiState,
-                uiAction = viewModel::onUiAction
+                uiAction = viewModel::onUiAction,
+                onLabelClick = { label ->
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateLabel(label = label))
+                    navController.navigate(UpdateLabel.route)
+                }
             )
         }
     }

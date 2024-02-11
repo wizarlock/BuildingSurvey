@@ -110,6 +110,8 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
+            is WorkWithDrawingAction.UpdateLabel -> repository.currentLabel = action.label
+
             WorkWithDrawingAction.StopRecord -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     _uiState.update {
@@ -141,7 +143,7 @@ class WorkWithDrawingViewModel @Inject constructor(
 
             is WorkWithDrawingAction.CreateLabel -> {
                 viewModelScope.launch {
-                    val isFileExists = repository.takePhoto(photoPath = action.path)
+                    val isFileExists = repository.takePhoto(photoPath = action.path).isNotEmpty()
                     if (isFileExists) {
                         val newPhotoNum = uiState.value.photoNum + 1
                         _uiState.update {

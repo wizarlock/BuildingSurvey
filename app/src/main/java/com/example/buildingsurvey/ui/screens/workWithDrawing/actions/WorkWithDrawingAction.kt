@@ -2,10 +2,13 @@ package com.example.buildingsurvey.ui.screens.workWithDrawing.actions
 
 import androidx.compose.ui.geometry.Offset
 import com.example.buildingsurvey.data.model.Drawing
+import com.example.buildingsurvey.data.model.Label
 
 sealed class WorkWithDrawingAction {
 
     data class UpdateDrawing(val drawing: Drawing) : WorkWithDrawingAction()
+
+    data class UpdateLabel(val label: Label) : WorkWithDrawingAction()
 
     data class StartRecord(val name: String) : WorkWithDrawingAction()
 

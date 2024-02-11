@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
+import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 
@@ -22,6 +23,7 @@ import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDra
 fun DrawingImage(
     uiState: WorkWithDrawingUiState,
     uiAction: (WorkWithDrawingAction) -> Unit,
+    onLabelClick: (Label) -> Unit
 ) {
     Box(
         modifier = boxForAllModifier(
@@ -51,9 +53,12 @@ fun DrawingImage(
 
             uiState.labels.collectAsState().value.forEach { label ->
                 Box(
-                    modifier = getLabelModifier(
+                    modifier = labelModifier(
                         photoMode = uiState.photoMode,
-                        label = label
+                        label = label,
+                        onLabelClick = { entry ->
+                            onLabelClick(entry)
+                        }
                     ),
                     contentAlignment = Alignment.Center
                 ) {

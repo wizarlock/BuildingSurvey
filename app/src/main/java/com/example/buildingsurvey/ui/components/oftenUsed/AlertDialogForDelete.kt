@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.components.projects.projectsList
+package com.example.buildingsurvey.ui.components.oftenUsed
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text

@@ -50,6 +50,7 @@ class Repository @Inject constructor(
 
     override var currentProject = Project()
     override var currentDrawing = Drawing()
+    override var currentLabel = Label()
 
     private var tempFile: File? = null
     private val outputDir = applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
@@ -104,7 +105,7 @@ class Repository @Inject constructor(
         tempFile!!.delete()
     }
 
-    override suspend fun takePhoto(photoPath: String): Boolean {
+    override suspend fun takePhoto(photoPath: String): String {
         return try {
             val bitmap = getBitmap(photoPath)
             File(photoPath).delete()
@@ -115,9 +116,9 @@ class Repository @Inject constructor(
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
                 out.flush()
             }
-            true
+            tempFile!!.path
         } catch (e: IOException) {
-            false
+            ""
         }
     }
 
@@ -160,13 +161,14 @@ class Repository @Inject constructor(
         val pdfRenderer =
             PdfRenderer(ParcelFileDescriptor.open(tempFile, ParcelFileDescriptor.MODE_READ_ONLY))
         val pdfPage = pdfRenderer.openPage(0)
-        val bitmap  =
+        val bitmap =
             Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         canvas.drawColor(Color.WHITE)
         pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
         val outputFile = File(outputDir, fileName)
         saveBitmapToFile(bitmap, outputFile)
+
         pdfPage.close()
         pdfRenderer.close()
         tempFile!!.delete()
@@ -207,8 +209,9 @@ class Repository @Inject constructor(
         }
     }
 
-    private fun saveLabelFile(fileName: String): Pair<Int, Int> {
+    private suspend fun saveLabelFile(fileName: String): Pair<Int, Int> {
         val outputFile = File(outputDir, fileName)
+        tempFile = Compressor.compress(applicationContext, tempFile!!)
         FileUtils.copyFile(tempFile, outputFile)
         tempFile!!.delete()
         val options = BitmapFactory.Options()
@@ -217,9 +220,16 @@ class Repository @Inject constructor(
         return Pair(options.outWidth, options.outHeight)
     }
 
-    override suspend fun removeLabel(label: Label) {
+    override suspend fun saveLabel() {
+        val outputFile = File(currentLabel.labelFilePath)
+        tempFile = Compressor.compress(applicationContext, tempFile!!)
+        FileUtils.copyFile(tempFile, outputFile)
+        tempFile!!.delete()
+    }
+
+    override suspend fun removeLabel() {
         _labelsList.update { currentList ->
-            currentList.filterNot { it == label }
+            currentList.filterNot { it == currentLabel }
         }
     }
 

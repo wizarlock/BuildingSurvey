@@ -14,9 +14,10 @@ import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.data.model.Label
 
 @Composable
-fun getLabelModifier(
+fun labelModifier(
     photoMode: Boolean,
-    label: Label
+    label: Label,
+    onLabelClick: (Label) -> Unit
 ): Modifier {
     val defaultLabelModifier = Modifier
         .offset(
@@ -38,7 +39,7 @@ fun getLabelModifier(
         defaultLabelModifier.pointerInput(Unit) {
             detectTapGestures(
                 onDoubleTap = {
-
+                    onLabelClick(label)
                 }
             )
         }

@@ -23,3 +23,7 @@ object AddDrawing : Destination {
 object WorkWithDrawing : Destination {
     override val route: String = "workWithDrawing"
 }
+
+object UpdateLabel : Destination {
+    override val route: String = "updateLabel"
+}

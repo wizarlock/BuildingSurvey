@@ -21,6 +21,8 @@ interface RepositoryInterface {
 
     var currentDrawing: Drawing
 
+    var currentLabel: Label
+
     suspend fun stopRecording()
 
     suspend fun startRecording(name: String, attachment: AudioAttachment)
@@ -31,7 +33,7 @@ interface RepositoryInterface {
 
     suspend fun loadFile(uri: Uri?): Boolean
 
-    suspend fun takePhoto(photoPath: String): Boolean
+    suspend fun takePhoto(photoPath: String): String
 
     suspend fun addDrawing(drawing: Drawing)
 
@@ -39,5 +41,7 @@ interface RepositoryInterface {
 
     suspend fun addLabel(x: Float, y: Float, name: String, width: Float, height: Float)
 
-    suspend fun removeLabel(label: Label)
+    suspend fun saveLabel()
+
+    suspend fun removeLabel()
 }

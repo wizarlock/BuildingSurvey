@@ -43,7 +43,7 @@ class AddProjectViewModel @Inject constructor(
 
             is AddProjectAction.UpdatePhotoFile -> {
                 viewModelScope.launch {
-                    val isFileExists = repository.takePhoto(photoPath = action.path)
+                    val isFileExists = repository.takePhoto(photoPath = action.path).isNotEmpty()
                     if (isFileExists) {
                         _uiState.update {
                             uiState.value.copy(isFileExists = true)

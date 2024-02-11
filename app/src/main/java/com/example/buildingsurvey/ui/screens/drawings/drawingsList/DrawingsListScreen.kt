@@ -31,7 +31,7 @@ import com.example.buildingsurvey.ui.components.drawings.drawingsList.ActionButt
 import com.example.buildingsurvey.ui.components.drawings.drawingsList.BotDrawingBar
 import com.example.buildingsurvey.ui.components.drawings.drawingsList.SelectDrawing
 import com.example.buildingsurvey.ui.components.myTopAppBar.MyTopAppBar
-import com.example.buildingsurvey.ui.components.projects.projectsList.AlertDialogForDelete
+import com.example.buildingsurvey.ui.components.oftenUsed.AlertDialogForDelete
 import com.example.buildingsurvey.ui.screens.drawings.drawingsList.actions.DrawingsListAction
 
 @Composable

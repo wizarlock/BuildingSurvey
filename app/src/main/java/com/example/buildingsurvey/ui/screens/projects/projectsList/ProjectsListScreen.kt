@@ -21,7 +21,7 @@ import com.example.buildingsurvey.data.model.Project
 import com.example.buildingsurvey.data.navigation.AddProject
 import com.example.buildingsurvey.data.navigation.DrawingsList
 import com.example.buildingsurvey.ui.components.myTopAppBar.MyTopAppBar
-import com.example.buildingsurvey.ui.components.projects.projectsList.AlertDialogForDelete
+import com.example.buildingsurvey.ui.components.oftenUsed.AlertDialogForDelete
 import com.example.buildingsurvey.ui.components.projects.projectsList.BotAppBarForProjects
 import com.example.buildingsurvey.ui.components.projects.projectsList.ListOfProjects
 import com.example.buildingsurvey.ui.screens.projects.projectsList.actions.ProjectsAction
