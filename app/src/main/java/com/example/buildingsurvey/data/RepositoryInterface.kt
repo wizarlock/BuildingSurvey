@@ -44,4 +44,6 @@ interface RepositoryInterface {
     suspend fun saveLabel()
 
     suspend fun removeLabel()
+
+    suspend fun loadDataFromDB()
 }

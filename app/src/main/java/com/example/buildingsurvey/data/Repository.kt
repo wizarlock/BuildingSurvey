@@ -15,6 +15,8 @@ import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
+import com.example.buildingsurvey.data.db.ProjectDao
+import com.example.buildingsurvey.data.db.entities.ProjectDbEntity
 import com.example.buildingsurvey.data.model.Audio
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
@@ -35,7 +37,8 @@ import java.util.UUID
 import javax.inject.Inject
 
 class Repository @Inject constructor(
-    @ApplicationContext private val applicationContext: Context
+    @ApplicationContext private val applicationContext: Context,
+    private val projectDao: ProjectDao
 ) : RepositoryInterface {
     private val _projectsList: MutableStateFlow<List<Project>> = MutableStateFlow(listOf())
     private val _audioList: MutableStateFlow<List<Audio>> = MutableStateFlow(listOf())
@@ -55,26 +58,55 @@ class Repository @Inject constructor(
     private var tempFile: File? = null
     private val outputDir = applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
 
-    override suspend fun addProject(project: Project, isFileExists: Boolean) {
-        if (isFileExists) {
-            val name = tempFile!!.name
-            val lastDotIndex = name.lastIndexOf(".")
-            val fileName = UUID.randomUUID().toString() + name.substring(lastDotIndex)
-            project.projectFilePath = "$outputDir/$fileName"
-            saveProjectFile(fileName = fileName)
-        }
-        _projectsList.update { currentList ->
-            val updatedList = currentList.toMutableList()
-            updatedList.add(project)
-            updatedList.toList()
+    override suspend fun loadDataFromDB() {
+        withContext(Dispatchers.IO) {
+            _projectsList.value = projectDao.getAllProjects().map { convertToProject(it) }
         }
     }
 
-    override suspend fun removeProject(project: Project) {
-        _projectsList.update { currentList ->
-            currentList.filterNot { it == project }
-        }
+    private fun convertToProject(project: ProjectDbEntity): Project {
+        return Project(
+            id = project.id,
+            name = project.name,
+            projectFilePath = project.projectFilePath
+        )
     }
+
+    override suspend fun addProject(project: Project, isFileExists: Boolean) =
+        withContext(Dispatchers.IO) {
+            if (isFileExists) {
+                val name = tempFile!!.name
+                val lastDotIndex = name.lastIndexOf(".")
+                val fileName = UUID.randomUUID().toString() + name.substring(lastDotIndex)
+                project.projectFilePath = "$outputDir/$fileName"
+                saveProjectFile(fileName = fileName)
+            }
+            val newProject = ProjectDbEntity(
+                id = project.id,
+                name = project.name,
+                projectFilePath = project.projectFilePath
+            )
+            projectDao.insert(newProject)
+            _projectsList.update { currentList ->
+                val updatedList = currentList.toMutableList()
+                updatedList.add(project)
+                updatedList.toList()
+            }
+        }
+
+
+    override suspend fun removeProject(project: Project) =
+        withContext(Dispatchers.IO) {
+            val newProject = ProjectDbEntity(
+                id = project.id,
+                name = project.name,
+                projectFilePath = project.projectFilePath
+            )
+            projectDao.delete(newProject)
+            _projectsList.update { currentList ->
+                currentList.filterNot { it == project }
+            }
+        }
 
     override suspend fun loadFile(uri: Uri?): Boolean {
         if (uri != null) {
