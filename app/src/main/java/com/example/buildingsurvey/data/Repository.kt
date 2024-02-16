@@ -15,13 +15,23 @@ import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
+import com.example.buildingsurvey.data.db.AudioDao
+import com.example.buildingsurvey.data.db.DrawingDao
+import com.example.buildingsurvey.data.db.LabelDao
 import com.example.buildingsurvey.data.db.ProjectDao
-import com.example.buildingsurvey.data.db.entities.ProjectDbEntity
 import com.example.buildingsurvey.data.model.Audio
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
 import com.example.buildingsurvey.ui.screens.AudioAttachment
+import com.example.buildingsurvey.utils.toAudio
+import com.example.buildingsurvey.utils.toAudioDbEntity
+import com.example.buildingsurvey.utils.toDrawing
+import com.example.buildingsurvey.utils.toDrawingDbEntity
+import com.example.buildingsurvey.utils.toLabel
+import com.example.buildingsurvey.utils.toLabelDbEntity
+import com.example.buildingsurvey.utils.toProject
+import com.example.buildingsurvey.utils.toProjectDbEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +48,10 @@ import javax.inject.Inject
 
 class Repository @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
-    private val projectDao: ProjectDao
+    private val projectDao: ProjectDao,
+    private val drawingDao: DrawingDao,
+    private val audioDao: AudioDao,
+    private val labelDao: LabelDao
 ) : RepositoryInterface {
     private val _projectsList: MutableStateFlow<List<Project>> = MutableStateFlow(listOf())
     private val _audioList: MutableStateFlow<List<Audio>> = MutableStateFlow(listOf())
@@ -60,16 +73,11 @@ class Repository @Inject constructor(
 
     override suspend fun loadDataFromDB() {
         withContext(Dispatchers.IO) {
-            _projectsList.value = projectDao.getAllProjects().map { convertToProject(it) }
+            _projectsList.value = projectDao.getAllProjects().map { it.toProject() }
+            _drawingsList.value = drawingDao.getAllDrawings().map { it.toDrawing() }
+            _audioList.value = audioDao.getAllAudio().map { it.toAudio() }
+            _labelsList.value = labelDao.getAllLabels().map { it.toLabel() }
         }
-    }
-
-    private fun convertToProject(project: ProjectDbEntity): Project {
-        return Project(
-            id = project.id,
-            name = project.name,
-            projectFilePath = project.projectFilePath
-        )
     }
 
     override suspend fun addProject(project: Project, isFileExists: Boolean) =
@@ -81,12 +89,7 @@ class Repository @Inject constructor(
                 project.projectFilePath = "$outputDir/$fileName"
                 saveProjectFile(fileName = fileName)
             }
-            val newProject = ProjectDbEntity(
-                id = project.id,
-                name = project.name,
-                projectFilePath = project.projectFilePath
-            )
-            projectDao.insert(newProject)
+            projectDao.insert(project.toProjectDbEntity())
             _projectsList.update { currentList ->
                 val updatedList = currentList.toMutableList()
                 updatedList.add(project)
@@ -97,12 +100,7 @@ class Repository @Inject constructor(
 
     override suspend fun removeProject(project: Project) =
         withContext(Dispatchers.IO) {
-            val newProject = ProjectDbEntity(
-                id = project.id,
-                name = project.name,
-                projectFilePath = project.projectFilePath
-            )
-            projectDao.delete(newProject)
+            projectDao.delete(project.toProjectDbEntity())
             _projectsList.update { currentList ->
                 currentList.filterNot { it == project }
             }
@@ -176,18 +174,20 @@ class Repository @Inject constructor(
         )
     }
 
-    override suspend fun addDrawing(drawing: Drawing) {
-        val fileName = drawing.name + ".jpg"
-        drawing.drawingFilePath = "$outputDir/$fileName"
-        drawing.projectId = currentProject.id
-        saveDrawingFile(fileName = fileName)
+    override suspend fun addDrawing(drawing: Drawing) =
+        withContext(Dispatchers.IO) {
+            val fileName = drawing.name + ".jpg"
+            drawing.drawingFilePath = "$outputDir/$fileName"
+            drawing.projectId = currentProject.id
+            saveDrawingFile(fileName = fileName)
 
-        _drawingsList.update { currentList ->
-            val updatedList = currentList.toMutableList()
-            updatedList.add(drawing)
-            updatedList.toList()
+            drawingDao.insert(drawing.toDrawingDbEntity())
+            _drawingsList.update { currentList ->
+                val updatedList = currentList.toMutableList()
+                updatedList.add(drawing)
+                updatedList.toList()
+            }
         }
-    }
 
     private fun saveDrawingFile(fileName: String) {
         val pdfRenderer =
@@ -214,32 +214,35 @@ class Repository @Inject constructor(
         }
     }
 
-    override suspend fun removeDrawing(drawing: Drawing) {
-        _drawingsList.update { currentList ->
-            currentList.filterNot { it == drawing }
+    override suspend fun removeDrawing(drawing: Drawing) =
+        withContext(Dispatchers.IO) {
+            drawingDao.delete(drawing.toDrawingDbEntity())
+            _drawingsList.update { currentList ->
+                currentList.filterNot { it == drawing }
+            }
         }
-    }
 
-    override suspend fun addLabel(x: Float, y: Float, name: String, width: Float, height: Float) {
-        val fileName = "$name.jpg"
-        val widthAndHeight = saveLabelFile(fileName)
+    override suspend fun addLabel(x: Float, y: Float, name: String, width: Float, height: Float) =
+        withContext(Dispatchers.IO) {
+            val fileName = "$name.jpg"
+            val widthAndHeight = saveLabelFile(fileName)
 
-        val label = Label(
-            name = name,
-            labelFilePath = "$outputDir/$fileName",
-            drawingId = currentDrawing.id,
-            xInApp = x,
-            yInApp = y,
-            xReal = (widthAndHeight.first / width) * x,
-            yReal = (widthAndHeight.second / height) * y
-        )
-
-        _labelsList.update { currentList ->
-            val updatedList = currentList.toMutableList()
-            updatedList.add(label)
-            updatedList.toList()
+            val label = Label(
+                name = name,
+                labelFilePath = "$outputDir/$fileName",
+                drawingId = currentDrawing.id,
+                xInApp = x,
+                yInApp = y,
+                xReal = (widthAndHeight.first / width) * x,
+                yReal = (widthAndHeight.second / height) * y
+            )
+            labelDao.insert(label.toLabelDbEntity())
+            _labelsList.update { currentList ->
+                val updatedList = currentList.toMutableList()
+                updatedList.add(label)
+                updatedList.toList()
+            }
         }
-    }
 
     private suspend fun saveLabelFile(fileName: String): Pair<Int, Int> {
         val outputFile = File(outputDir, fileName)
@@ -259,11 +262,13 @@ class Repository @Inject constructor(
         tempFile!!.delete()
     }
 
-    override suspend fun removeLabel() {
-        _labelsList.update { currentList ->
-            currentList.filterNot { it == currentLabel }
+    override suspend fun removeLabel() =
+        withContext(Dispatchers.IO) {
+            labelDao.delete(currentLabel.toLabelDbEntity())
+            _labelsList.update { currentList ->
+                currentList.filterNot { it == currentLabel }
+            }
         }
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun startRecording(name: String, attachment: AudioAttachment) {
@@ -287,13 +292,15 @@ class Repository @Inject constructor(
         }
     }
 
-    private fun addRecording(audio: Audio) {
-        _audioList.update { currentList ->
-            val updatedList = currentList.toMutableList()
-            updatedList.add(audio)
-            updatedList.toList()
+    private suspend fun addRecording(audio: Audio) =
+        withContext(Dispatchers.IO) {
+            audioDao.insert(audio.toAudioDbEntity())
+            _audioList.update { currentList ->
+                val updatedList = currentList.toMutableList()
+                updatedList.add(audio)
+                updatedList.toList()
+            }
         }
-    }
 
     override suspend fun stopRecording() {
         if (recorder != null) {
