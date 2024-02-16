@@ -1,5 +1,6 @@
 package com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar
 
+import android.Manifest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
@@ -9,15 +10,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
 import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PhotoIcon(
     updatePhotoMode: () -> Unit,
     uiState: WorkWithDrawingUiState
 ) {
+    val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
     IconButton(
         onClick = {
-            updatePhotoMode()
+            if (permissionState.hasPermission) updatePhotoMode()
+            else permissionState.launchPermissionRequest()
         }
     ) {
         Image(

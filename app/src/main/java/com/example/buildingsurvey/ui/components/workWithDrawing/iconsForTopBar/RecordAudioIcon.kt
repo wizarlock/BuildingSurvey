@@ -24,16 +24,11 @@ fun RecordAudioIcon(
 
     IconButton(
         onClick = {
-            if (permissionState.hasPermission) {
+            if (permissionState.hasPermission)
+                if (!uiState.audioMode) startRecord()
+                else stopRecord()
+            else permissionState.launchPermissionRequest()
 
-                if (!uiState.audioMode) {
-                    startRecord()
-                } else {
-                    stopRecord()
-                }
-            } else {
-                permissionState.launchPermissionRequest()
-            }
         }
     ) {
         Image(

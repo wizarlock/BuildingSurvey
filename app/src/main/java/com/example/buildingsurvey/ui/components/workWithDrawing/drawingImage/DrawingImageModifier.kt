@@ -19,12 +19,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.core.content.FileProvider
 import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 import java.util.UUID
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun drawingImageModifier(
     photoMode: Boolean,
@@ -33,7 +30,6 @@ fun drawingImageModifier(
 ): Modifier {
     val context = LocalContext.current
     val currentDensity = LocalDensity.current
-    val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val currentPhotoPath = remember { mutableStateOf("") }
     val x = remember { mutableStateOf(0f) }
     val y = remember { mutableStateOf(0f) }
@@ -65,33 +61,31 @@ fun drawingImageModifier(
 
     return if (photoMode) {
         defaultImageModifier.pointerInput(Unit) {
-            if (permissionState.hasPermission) {
-                detectTapGestures { offset ->
-                    val offsetInDp = with(currentDensity) {
-                        Offset(offset.x / density, offset.y / density)
-                    }
-                    x.value = offsetInDp.x
-                    y.value = offsetInDp.y
-                    width.value = size.width.toDp().value
-                    height.value = size.height.toDp().value
-                    val imgFile = File.createTempFile(
-                        UUID.randomUUID().toString(),
-                        ".jpg",
-                        context.cacheDir
-                    )
-                    currentPhotoPath.value = imgFile.absolutePath
-                    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    cameraIntent.putExtra(
-                        MediaStore.EXTRA_OUTPUT,
-                        FileProvider.getUriForFile(
-                            context,
-                            "com.example.buildingsurvey.fileprovider",
-                            imgFile
-                        )
-                    )
-                    cameraLauncher.launch(cameraIntent)
+            detectTapGestures { offset ->
+                val offsetInDp = with(currentDensity) {
+                    Offset(offset.x / density, offset.y / density)
                 }
-            } else permissionState.launchPermissionRequest()
+                x.value = offsetInDp.x
+                y.value = offsetInDp.y
+                width.value = size.width.toDp().value
+                height.value = size.height.toDp().value
+                val imgFile = File.createTempFile(
+                    UUID.randomUUID().toString(),
+                    ".jpg",
+                    context.cacheDir
+                )
+                currentPhotoPath.value = imgFile.absolutePath
+                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                cameraIntent.putExtra(
+                    MediaStore.EXTRA_OUTPUT,
+                    FileProvider.getUriForFile(
+                        context,
+                        "com.example.buildingsurvey.fileprovider",
+                        imgFile
+                    )
+                )
+                cameraLauncher.launch(cameraIntent)
+            }
         }
     } else defaultImageModifier
 }
