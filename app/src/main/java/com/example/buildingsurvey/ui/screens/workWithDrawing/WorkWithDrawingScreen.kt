@@ -61,7 +61,13 @@ fun WorkWithDrawingScreen(
 
         bottomBar = {
             BotAppBarWorkWithDrawing(
-                onClick = {  navController.navigate(AddDefect.route) }
+                uiState = uiState,
+                updateSelectedTypeOfDefect = { typeOfDefect ->
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateSelectedTypeOfDefect(typeOfDefect))
+                },
+                addTypeOfDefect = {
+                    navController.navigate(AddDefect.route)
+                }
             )
         }
     )

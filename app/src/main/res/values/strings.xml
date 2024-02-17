@@ -43,5 +43,6 @@
     <string name="select_layer_color">Выберите цвет слоя</string>
     <string name="selected_layer_color">Цвет слоя выбран</string>
     <string name="layer_color_not_selected">Цвет не выбран</string>
-
+    <string name="repeat_defect_color">Данный цвет уже используется</string>
+    <string name="add_defect">Добавить дефект</string>
 </resources>

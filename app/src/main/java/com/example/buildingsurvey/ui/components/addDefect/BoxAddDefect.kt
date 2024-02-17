@@ -54,13 +54,14 @@ fun BoxAddDefect(
 
         ColorPicker(
             color = uiState.defectColorHexCode,
-            isValid = uiState.isValidDefectColorHexCode,
+            isValid = (uiState.isValidDefectColorHexCode && uiState.isNotRepeatDefectColorHexCode),
             uiAction = uiAction
         )
 
-        if (!uiState.isValidDefectColorHexCode)
+        if (!(uiState.isValidDefectColorHexCode && uiState.isNotRepeatDefectColorHexCode))
             Text(
-                text = stringResource(id = R.string.layer_color_not_selected),
+                text = if (!uiState.isValidDefectColorHexCode) stringResource(id = R.string.layer_color_not_selected)
+                else stringResource(id = R.string.repeat_defect_color),
                 fontSize = 10.sp,
                 color = Color.Red
             )

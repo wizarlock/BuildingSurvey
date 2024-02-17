@@ -6,6 +6,7 @@ import com.example.buildingsurvey.data.RepositoryInterface
 import com.example.buildingsurvey.data.datastore.DataStoreManager
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
+import com.example.buildingsurvey.data.model.TypeOfDefect
 import com.example.buildingsurvey.ui.screens.AudioAttachment
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,12 +30,20 @@ class WorkWithDrawingViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
+        val defaultColour = TypeOfDefect(
+            name = "0",
+            hexCode = "FF000000"
+        )
         viewModelScope.launch {
             _uiState.update {
                 uiState.value.copy(
                     drawings = repository.drawingsList.map { drawings ->
                         drawings.filter { it.projectId == repository.currentProject.id }
-                    }.stateIn(viewModelScope)
+                    }.stateIn(viewModelScope),
+                    typeOfDefect = repository.typeOfDefectList.map { typeOfDefect ->
+                        listOf(defaultColour) + typeOfDefect.filter { it.projectId == repository.currentProject.id }
+                    }.stateIn(viewModelScope),
+                    selectedType = defaultColour
                 )
             }
         }
@@ -162,6 +171,14 @@ class WorkWithDrawingViewModel @Inject constructor(
                     }
                 }
             }
+
+            is WorkWithDrawingAction.UpdateSelectedTypeOfDefect -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        selectedType = action.typeOfDefect
+                    )
+                }
+            }
         }
     }
 }
@@ -170,9 +187,12 @@ class WorkWithDrawingViewModel @Inject constructor(
 data class WorkWithDrawingUiState(
     private val _drawings: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf()),
     private val _labels: MutableStateFlow<List<Label>> = MutableStateFlow(listOf()),
+    private val _typeOfDefect: MutableStateFlow<List<TypeOfDefect>> = MutableStateFlow(listOf()),
 
+    val typeOfDefect: StateFlow<List<TypeOfDefect>> = _typeOfDefect.asStateFlow(),
     val drawings: StateFlow<List<Drawing>> = _drawings.asStateFlow(),
     val labels: StateFlow<List<Label>> = _labels.asStateFlow(),
+    var selectedType: TypeOfDefect = TypeOfDefect(),
     val audioNum: Int = 0,
     val photoNum: Int = 0,
     val photoMode: Boolean = false,

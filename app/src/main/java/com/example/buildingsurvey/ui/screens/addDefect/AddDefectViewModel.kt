@@ -35,7 +35,8 @@ class AddDefectViewModel @Inject constructor(
             AddDefectAction.SaveDefect -> {
                 val typeOfDefect = TypeOfDefect(
                     name = uiState.value.defectName,
-                    hexCode = uiState.value.defectColorHexCode
+                    hexCode = uiState.value.defectColorHexCode,
+                    projectId = repository.currentProject.id
                 )
                 viewModelScope.launch(Dispatchers.IO) {
                     repository.addTypeOfDefect(
@@ -53,20 +54,25 @@ class AddDefectViewModel @Inject constructor(
 
         val isNotRepeatDefectName = isNotRepeatName(
             name = uiState.value.defectName,
-            list = repository.typeOfDefectList.value.map { it.name }
-        )
+            list = repository.typeOfDefectList.value.filter { it.projectId == repository.currentProject.id }.map { it.name }
+        ) &&  uiState.value.defectName != "0"
 
         val isValidDefectColorHexCode = uiState.value.defectColorHexCode.isNotEmpty()
 
+        val isNotRepeatDefectColorHexCode = isNotRepeatName(
+            name = uiState.value.defectColorHexCode,
+            list = repository.typeOfDefectList.value.filter { it.projectId == repository.currentProject.id }.map { it.hexCode }
+        ) &&  uiState.value.defectColorHexCode != "FF000000"
         _uiState.update {
             uiState.value.copy(
                 isValidDefectName = isValidDefectName,
                 isNotRepeatDefectName = isNotRepeatDefectName,
-                isValidDefectColorHexCode = isValidDefectColorHexCode
+                isValidDefectColorHexCode = isValidDefectColorHexCode,
+                isNotRepeatDefectColorHexCode = isNotRepeatDefectColorHexCode
             )
         }
 
-        return isValidDefectName && isNotRepeatDefectName && isValidDefectColorHexCode
+        return isValidDefectName && isNotRepeatDefectName && isValidDefectColorHexCode && isNotRepeatDefectColorHexCode
     }
 }
 
@@ -76,4 +82,5 @@ data class AddDefectUiState(
     val isNotRepeatDefectName: Boolean = true,
     val defectColorHexCode: String = "",
     val isValidDefectColorHexCode: Boolean = true,
+    val isNotRepeatDefectColorHexCode: Boolean = true
 )
