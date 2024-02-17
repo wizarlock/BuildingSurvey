@@ -35,7 +35,7 @@ class AddDefectViewModel @Inject constructor(
             AddDefectAction.SaveDefect -> {
                 val typeOfDefect = TypeOfDefect(
                     name = uiState.value.defectName,
-                    hexCode = uiState.value.defectColorHexCode,
+                    hexCode = "#" + uiState.value.defectColorHexCode,
                     projectId = repository.currentProject.id
                 )
                 viewModelScope.launch(Dispatchers.IO) {
@@ -60,9 +60,9 @@ class AddDefectViewModel @Inject constructor(
         val isValidDefectColorHexCode = uiState.value.defectColorHexCode.isNotEmpty()
 
         val isNotRepeatDefectColorHexCode = isNotRepeatName(
-            name = uiState.value.defectColorHexCode,
+            name = "#" + uiState.value.defectColorHexCode,
             list = repository.typeOfDefectList.value.filter { it.projectId == repository.currentProject.id }.map { it.hexCode }
-        ) &&  uiState.value.defectColorHexCode != "FF000000"
+        ) &&  uiState.value.defectColorHexCode != "#FF000000"
         _uiState.update {
             uiState.value.copy(
                 isValidDefectName = isValidDefectName,

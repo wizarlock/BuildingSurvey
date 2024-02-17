@@ -15,10 +15,11 @@ import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
-import com.example.buildingsurvey.data.db.AudioDao
-import com.example.buildingsurvey.data.db.DrawingDao
-import com.example.buildingsurvey.data.db.LabelDao
-import com.example.buildingsurvey.data.db.ProjectDao
+import com.example.buildingsurvey.data.db.dao.AudioDao
+import com.example.buildingsurvey.data.db.dao.DrawingDao
+import com.example.buildingsurvey.data.db.dao.LabelDao
+import com.example.buildingsurvey.data.db.dao.ProjectDao
+import com.example.buildingsurvey.data.db.dao.TypeOfDefectDao
 import com.example.buildingsurvey.data.model.Audio
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
@@ -33,6 +34,8 @@ import com.example.buildingsurvey.utils.toLabel
 import com.example.buildingsurvey.utils.toLabelDbEntity
 import com.example.buildingsurvey.utils.toProject
 import com.example.buildingsurvey.utils.toProjectDbEntity
+import com.example.buildingsurvey.utils.toTypeOfDefect
+import com.example.buildingsurvey.utils.toTypeOfDefectDbEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +55,8 @@ class Repository @Inject constructor(
     private val projectDao: ProjectDao,
     private val drawingDao: DrawingDao,
     private val audioDao: AudioDao,
-    private val labelDao: LabelDao
+    private val labelDao: LabelDao,
+    private val typeOfDefectDao: TypeOfDefectDao
 ) : RepositoryInterface {
     private val _projectsList: MutableStateFlow<List<Project>> = MutableStateFlow(listOf())
     private val _audioList: MutableStateFlow<List<Audio>> = MutableStateFlow(listOf())
@@ -80,6 +84,7 @@ class Repository @Inject constructor(
             _drawingsList.value = drawingDao.getAllDrawings().map { it.toDrawing() }
             _audioList.value = audioDao.getAllAudio().map { it.toAudio() }
             _labelsList.value = labelDao.getAllLabels().map { it.toLabel() }
+            _typeOfDefectList.value = typeOfDefectDao.getAllTypes().map { it.toTypeOfDefect() }
         }
     }
 
@@ -275,6 +280,7 @@ class Repository @Inject constructor(
 
     override suspend fun addTypeOfDefect(typeOfDefect: TypeOfDefect) =
         withContext(Dispatchers.IO) {
+            typeOfDefectDao.insert(typeOfDefect.toTypeOfDefectDbEntity())
             _typeOfDefectList.update { currentList ->
                 val updatedList = currentList.toMutableList()
                 updatedList.add(typeOfDefect)

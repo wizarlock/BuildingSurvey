@@ -4,10 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.buildingsurvey.data.db.dao.AudioDao
+import com.example.buildingsurvey.data.db.dao.DrawingDao
+import com.example.buildingsurvey.data.db.dao.LabelDao
+import com.example.buildingsurvey.data.db.dao.ProjectDao
+import com.example.buildingsurvey.data.db.dao.TypeOfDefectDao
 import com.example.buildingsurvey.data.db.entities.AudioDbEntity
 import com.example.buildingsurvey.data.db.entities.DrawingDbEntity
 import com.example.buildingsurvey.data.db.entities.LabelDbEntity
 import com.example.buildingsurvey.data.db.entities.ProjectDbEntity
+import com.example.buildingsurvey.data.db.entities.TypeOfDefectDbEntity
 
 
 @Database(
@@ -16,7 +22,8 @@ import com.example.buildingsurvey.data.db.entities.ProjectDbEntity
         ProjectDbEntity::class,
         DrawingDbEntity::class,
         LabelDbEntity::class,
-        AudioDbEntity::class
+        AudioDbEntity::class,
+        TypeOfDefectDbEntity::class
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -28,6 +35,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getAudioDao(): AudioDao
 
     abstract fun getLabelDao(): LabelDao
+
+    abstract fun getTypeOfDefectDao(): TypeOfDefectDao
 
     companion object {
         private var database: AppDatabase? = null

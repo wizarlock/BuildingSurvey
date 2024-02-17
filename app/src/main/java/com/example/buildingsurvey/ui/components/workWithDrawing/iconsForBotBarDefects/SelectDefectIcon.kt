@@ -58,7 +58,7 @@ fun SelectDefectIcon(
                     .padding(5.dp)
             ) {
                 drawCircle(
-                    color = Color(android.graphics.Color.parseColor("#" + uiState.selectedType.hexCode)),
+                    color = Color(android.graphics.Color.parseColor(uiState.selectedType.hexCode)),
                     radius = size.minDimension / 2f
                 )
                 drawCircle(
@@ -90,7 +90,7 @@ fun SelectDefectIcon(
                                 .size(30.dp)
                                 .border(2.dp, Color.Black, CircleShape)
                                 .background(
-                                    color = Color(android.graphics.Color.parseColor("#" + type.hexCode)),
+                                    color = Color(android.graphics.Color.parseColor(type.hexCode)),
                                     shape = CircleShape
                                 )
                         )

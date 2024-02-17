@@ -4,10 +4,12 @@ import com.example.buildingsurvey.data.db.entities.AudioDbEntity
 import com.example.buildingsurvey.data.db.entities.DrawingDbEntity
 import com.example.buildingsurvey.data.db.entities.LabelDbEntity
 import com.example.buildingsurvey.data.db.entities.ProjectDbEntity
+import com.example.buildingsurvey.data.db.entities.TypeOfDefectDbEntity
 import com.example.buildingsurvey.data.model.Audio
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
+import com.example.buildingsurvey.data.model.TypeOfDefect
 
 fun Project.toProjectDbEntity(): ProjectDbEntity =
     ProjectDbEntity(
@@ -79,4 +81,20 @@ fun LabelDbEntity.toLabel(): Label =
         yInApp = this.yInApp,
         xReal = this.xReal,
         yReal = this.yReal
+    )
+
+fun TypeOfDefectDbEntity.toTypeOfDefect(): TypeOfDefect =
+    TypeOfDefect(
+        id = this.id,
+        name = this.name,
+        hexCode = this.hexCode,
+        projectId = this.projectId
+    )
+
+fun TypeOfDefect.toTypeOfDefectDbEntity(): TypeOfDefectDbEntity =
+    TypeOfDefectDbEntity(
+        id = this.id,
+        name = this.name,
+        hexCode = this.hexCode,
+        projectId = this.projectId
     )

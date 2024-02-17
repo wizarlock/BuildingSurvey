@@ -32,7 +32,7 @@ class WorkWithDrawingViewModel @Inject constructor(
     init {
         val defaultColour = TypeOfDefect(
             name = "0",
-            hexCode = "FF000000"
+            hexCode = "#FF000000"
         )
         viewModelScope.launch {
             _uiState.update {

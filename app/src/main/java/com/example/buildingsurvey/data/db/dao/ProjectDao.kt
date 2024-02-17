@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.data.db
+package com.example.buildingsurvey.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete

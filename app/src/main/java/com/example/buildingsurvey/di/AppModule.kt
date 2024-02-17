@@ -4,10 +4,11 @@ import android.content.Context
 import com.example.buildingsurvey.data.RepositoryInterface
 import com.example.buildingsurvey.data.Repository
 import com.example.buildingsurvey.data.db.AppDatabase
-import com.example.buildingsurvey.data.db.AudioDao
-import com.example.buildingsurvey.data.db.DrawingDao
-import com.example.buildingsurvey.data.db.LabelDao
-import com.example.buildingsurvey.data.db.ProjectDao
+import com.example.buildingsurvey.data.db.dao.AudioDao
+import com.example.buildingsurvey.data.db.dao.DrawingDao
+import com.example.buildingsurvey.data.db.dao.LabelDao
+import com.example.buildingsurvey.data.db.dao.ProjectDao
+import com.example.buildingsurvey.data.db.dao.TypeOfDefectDao
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -53,6 +54,12 @@ interface AppModule {
         @Provides
         fun provideLabelDao(database: AppDatabase): LabelDao {
             return database.getLabelDao()
+        }
+
+        @Singleton
+        @Provides
+        fun provideTypeOfDefectDao(database: AppDatabase): TypeOfDefectDao {
+            return database.getTypeOfDefectDao()
         }
     }
 }
