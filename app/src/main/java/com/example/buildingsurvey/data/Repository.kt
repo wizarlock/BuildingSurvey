@@ -23,6 +23,7 @@ import com.example.buildingsurvey.data.model.Audio
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
+import com.example.buildingsurvey.data.model.TypeOfDefect
 import com.example.buildingsurvey.ui.screens.AudioAttachment
 import com.example.buildingsurvey.utils.toAudio
 import com.example.buildingsurvey.utils.toAudioDbEntity
@@ -57,12 +58,14 @@ class Repository @Inject constructor(
     private val _audioList: MutableStateFlow<List<Audio>> = MutableStateFlow(listOf())
     private val _drawingsList: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf())
     private val _labelsList: MutableStateFlow<List<Label>> = MutableStateFlow(listOf())
+    private val _typeOfDefectList: MutableStateFlow<List<TypeOfDefect>> = MutableStateFlow(listOf())
     private var recorder: MediaRecorder? = null
 
     override val projectsList = _projectsList.asStateFlow()
     override val drawingsList = _drawingsList.asStateFlow()
     override val audioList = _audioList.asStateFlow()
     override val labelsList = _labelsList.asStateFlow()
+    override val typeOfDefectList = _typeOfDefectList.asStateFlow()
 
     override var currentProject = Project()
     override var currentDrawing = Drawing()
@@ -267,6 +270,15 @@ class Repository @Inject constructor(
             labelDao.delete(currentLabel.toLabelDbEntity())
             _labelsList.update { currentList ->
                 currentList.filterNot { it == currentLabel }
+            }
+        }
+
+    override suspend fun addTypeOfDefect(typeOfDefect: TypeOfDefect) =
+        withContext(Dispatchers.IO) {
+            _typeOfDefectList.update { currentList ->
+                val updatedList = currentList.toMutableList()
+                updatedList.add(typeOfDefect)
+                updatedList.toList()
             }
         }
 

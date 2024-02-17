@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.example.buildingsurvey.data.model.Drawing
 
 @Composable
-fun SelectIcon(
+fun SelectDrawingIcon(
     selectDrawing: (Drawing) -> Unit,
     currentDrawing: Drawing,
     listOfDrawings: List<Drawing>

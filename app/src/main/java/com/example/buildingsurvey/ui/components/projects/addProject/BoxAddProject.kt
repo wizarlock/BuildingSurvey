@@ -39,7 +39,8 @@ fun BoxAddProject(
             onValueChange = { text ->
                 uiAction(AddProjectAction.UpdateProjectName(text))
             },
-            typeOfKeyboard = KeyboardType.Text
+            typeOfKeyboard = KeyboardType.Text,
+            length = 60
         )
 
         if (!(uiState.isValidProjectName && uiState.isNotRepeatProjectName))

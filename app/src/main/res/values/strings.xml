@@ -37,4 +37,11 @@
     <string name="change_photo">Сменить фото</string>
     <string name="delete_label_title">Удаление метки</string>
     <string name="delete_label_text">Вы уверены, что хотите безвозвратно удалить метку %s?</string>
+    <string name="defect_name">Название дефекта</string>
+    <string name="incorrect_defect_name">Введите корректное название дефекта</string>
+    <string name="repeat_defect_name">Данное название дефекта уже используется</string>
+    <string name="select_layer_color">Выберите цвет слоя</string>
+    <string name="selected_layer_color">Цвет слоя выбран</string>
+    <string name="layer_color_not_selected">Цвет не выбран</string>
+
 </resources>

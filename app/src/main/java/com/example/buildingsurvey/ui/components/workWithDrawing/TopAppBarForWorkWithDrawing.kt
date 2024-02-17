@@ -14,7 +14,7 @@ import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.F
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.PhotoIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.RecordAudioIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.ReturnBackIcon
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.SelectIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.SelectDrawingIcon
 import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +37,7 @@ fun TopAppBarForWorkWithDrawing(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                SelectIcon(
+                SelectDrawingIcon(
                     selectDrawing = { drawing ->
                         selectDrawing(drawing)
                     },

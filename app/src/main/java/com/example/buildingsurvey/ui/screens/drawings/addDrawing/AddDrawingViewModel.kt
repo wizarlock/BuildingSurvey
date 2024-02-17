@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.buildingsurvey.data.RepositoryInterface
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.ui.screens.drawings.addDrawing.actions.AddDrawingAction
-import com.example.buildingsurvey.ui.screens.isNotRepeatProjectOrDrawingName
-import com.example.buildingsurvey.ui.screens.isValidProjectOrDrawingName
+import com.example.buildingsurvey.ui.screens.isNotRepeatName
+import com.example.buildingsurvey.ui.screens.isValidName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddDrawingViewModel @Inject constructor(
-    private val repository: RepositoryInterface,
+    private val repository: RepositoryInterface
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AddDrawingUiState())
     val uiState = _uiState.asStateFlow()
@@ -45,11 +45,11 @@ class AddDrawingViewModel @Inject constructor(
     }
 
     fun areFieldsValid(): Boolean {
-        val isValidDrawingName = isValidProjectOrDrawingName(
+        val isValidDrawingName = isValidName(
             name = uiState.value.drawingName,
         )
 
-        val isNotRepeatDrawingName = isNotRepeatProjectOrDrawingName(
+        val isNotRepeatDrawingName = isNotRepeatName(
             name = uiState.value.drawingName,
             list = repository.drawingsList.value.map { it.name }
         )

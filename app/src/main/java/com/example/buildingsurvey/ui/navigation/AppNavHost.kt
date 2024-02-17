@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.buildingsurvey.data.navigation.AddDefect
 import com.example.buildingsurvey.data.navigation.AddDrawing
 import com.example.buildingsurvey.data.navigation.AddProject
 import com.example.buildingsurvey.data.navigation.DrawingsList
@@ -12,6 +13,7 @@ import com.example.buildingsurvey.data.navigation.ProjectsList
 import com.example.buildingsurvey.data.navigation.Start
 import com.example.buildingsurvey.data.navigation.UpdateLabel
 import com.example.buildingsurvey.data.navigation.WorkWithDrawing
+import com.example.buildingsurvey.ui.screens.addDefect.AddDefectScreen
 import com.example.buildingsurvey.ui.screens.drawings.addDrawing.AddDrawingScreen
 import com.example.buildingsurvey.ui.screens.drawings.drawingsList.DrawingsListScreen
 import com.example.buildingsurvey.ui.screens.projects.addProject.AddProjectScreen
@@ -50,6 +52,9 @@ fun AppNavHost(
         }
         composable(UpdateLabel.route) {
             UpdateLabelScreen(navController = navController)
+        }
+        composable(AddDefect.route) {
+            AddDefectScreen(navController = navController)
         }
     }
 }

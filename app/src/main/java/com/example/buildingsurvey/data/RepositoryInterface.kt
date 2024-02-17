@@ -5,6 +5,7 @@ import com.example.buildingsurvey.data.model.Audio
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
+import com.example.buildingsurvey.data.model.TypeOfDefect
 import com.example.buildingsurvey.ui.screens.AudioAttachment
 import kotlinx.coroutines.flow.StateFlow
 
@@ -16,6 +17,8 @@ interface RepositoryInterface {
     val audioList: StateFlow<List<Audio>>
 
     val labelsList: StateFlow<List<Label>>
+
+    val typeOfDefectList: StateFlow<List<TypeOfDefect>>
 
     var currentProject: Project
 
@@ -44,6 +47,8 @@ interface RepositoryInterface {
     suspend fun saveLabel()
 
     suspend fun removeLabel()
+
+    suspend fun addTypeOfDefect(typeOfDefect: TypeOfDefect)
 
     suspend fun loadDataFromDB()
 }

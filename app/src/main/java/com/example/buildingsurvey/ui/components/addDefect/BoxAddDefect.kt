@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.components.drawings.addDrawing
+package com.example.buildingsurvey.ui.components.addDefect
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -17,13 +17,13 @@ import androidx.compose.ui.unit.sp
 import com.example.buildingsurvey.R
 import com.example.buildingsurvey.ui.components.oftenUsed.DefaultButton
 import com.example.buildingsurvey.ui.components.oftenUsed.TextFieldForFilling
-import com.example.buildingsurvey.ui.screens.drawings.addDrawing.AddDrawingUiState
-import com.example.buildingsurvey.ui.screens.drawings.addDrawing.actions.AddDrawingAction
+import com.example.buildingsurvey.ui.screens.addDefect.AddDefectUiState
+import com.example.buildingsurvey.ui.screens.addDefect.actions.AddDefectAction
 
 @Composable
-fun BoxAddDrawing(
-    uiState: AddDrawingUiState,
-    uiAction: (AddDrawingAction) -> Unit,
+fun BoxAddDefect(
+    uiState: AddDefectUiState,
+    uiAction: (AddDefectAction) -> Unit,
     onSavingClick: () -> Unit = {}
 ) {
     Column(
@@ -33,39 +33,37 @@ fun BoxAddDrawing(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextFieldForFilling(
-            label = stringResource(id = R.string.drawing_name),
-            text = uiState.drawingName,
-            isValid = (uiState.isValidDrawingName && uiState.isNotRepeatDrawingName),
+            label = stringResource(id = R.string.defect_name),
+            text = uiState.defectName,
+            isValid = (uiState.isValidDefectName && uiState.isNotRepeatDefectName),
             onValueChange = { text ->
-                uiAction(AddDrawingAction.UpdateDrawingName(text))
+                uiAction(AddDefectAction.UpdateDefectName(text))
             },
             typeOfKeyboard = KeyboardType.Text,
-            length = 60
+            length = 30
         )
 
-        if (!(uiState.isValidDrawingName && uiState.isNotRepeatDrawingName))
+        if (!(uiState.isValidDefectName && uiState.isNotRepeatDefectName))
             Text(
-                text = if (!uiState.isValidDrawingName)
-                    stringResource(id = R.string.incorrect_drawing_name)
-                else stringResource(id = R.string.repeat_drawing_name),
+                text = if (!uiState.isValidDefectName)
+                    stringResource(id = R.string.incorrect_defect_name)
+                else stringResource(id = R.string.repeat_defect_name),
                 fontSize = 10.sp,
                 color = Color.Red
             )
 
-        LoadTextField(
-            loadFile = { uri ->
-                uiAction(AddDrawingAction.UpdateSelectedFile(uri))
-            },
-            isFilled = uiState.isDrawingFileAttached,
-            isValid = uiState.isDrawingFileValid
+        ColorPicker(
+            color = uiState.defectColorHexCode,
+            isValid = uiState.isValidDefectColorHexCode,
+            uiAction = uiAction
         )
-        if (!uiState.isDrawingFileValid)
+
+        if (!uiState.isValidDefectColorHexCode)
             Text(
-                text = stringResource(id = R.string.incorrect_drawing_file),
+                text = stringResource(id = R.string.layer_color_not_selected),
                 fontSize = 10.sp,
                 color = Color.Red
             )
-
         Box(
             modifier = Modifier.padding(10.dp)
         ) {

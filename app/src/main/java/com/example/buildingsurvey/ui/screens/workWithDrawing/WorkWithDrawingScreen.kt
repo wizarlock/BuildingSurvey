@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.buildingsurvey.R
+import com.example.buildingsurvey.data.navigation.AddDefect
 import com.example.buildingsurvey.data.navigation.UpdateLabel
 import com.example.buildingsurvey.ui.components.workWithDrawing.BotAppBarWorkWithDrawing
 import com.example.buildingsurvey.ui.components.workWithDrawing.drawingImage.DrawingImage
@@ -59,7 +60,9 @@ fun WorkWithDrawingScreen(
         },
 
         bottomBar = {
-            BotAppBarWorkWithDrawing()
+            BotAppBarWorkWithDrawing(
+                onClick = {  navController.navigate(AddDefect.route) }
+            )
         }
     )
     { paddingValues ->

@@ -16,6 +16,7 @@ import com.example.buildingsurvey.data.model.Label
 @Composable
 fun labelModifier(
     photoMode: Boolean,
+    zoom: Boolean,
     label: Label,
     onLabelClick: (Label) -> Unit
 ): Modifier {
@@ -35,7 +36,7 @@ fun labelModifier(
             shape = CircleShape
         )
 
-    return if (!photoMode)
+    return if (!photoMode && !zoom)
         defaultLabelModifier.pointerInput(Unit) {
             detectTapGestures(
                 onDoubleTap = {

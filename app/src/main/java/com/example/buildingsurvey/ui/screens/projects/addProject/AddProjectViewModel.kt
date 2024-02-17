@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.buildingsurvey.data.RepositoryInterface
 import com.example.buildingsurvey.data.model.Project
-import com.example.buildingsurvey.ui.screens.isNotRepeatProjectOrDrawingName
-import com.example.buildingsurvey.ui.screens.isValidProjectOrDrawingName
+import com.example.buildingsurvey.ui.screens.isNotRepeatName
+import com.example.buildingsurvey.ui.screens.isValidName
 import com.example.buildingsurvey.ui.screens.projects.addProject.actions.AddProjectAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -59,11 +59,11 @@ class AddProjectViewModel @Inject constructor(
     }
 
     fun areFieldsValid(): Boolean {
-        val isValidProjectName = isValidProjectOrDrawingName(
+        val isValidProjectName = isValidName(
             name = uiState.value.projectName,
         )
 
-        val isNotRepeatProjectName = isNotRepeatProjectOrDrawingName(
+        val isNotRepeatProjectName = isNotRepeatName(
             name = uiState.value.projectName,
             list = repository.projectsList.value.map { it.name }
         )

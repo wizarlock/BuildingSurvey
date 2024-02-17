@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TextFieldForFilling(
     label: String,
+    length: Int,
     text: String,
     isValid: Boolean,
     onValueChange: (String) -> Unit,
@@ -39,7 +40,7 @@ fun TextFieldForFilling(
         modifier = Modifier.padding(10.dp),
         value = currentText.takeIf { it.isNotEmpty() }?.toString() ?: "",
         onValueChange = {
-            if (it.length <= 60) {
+            if (it.length <= length) {
                 currentText = it
                 onValueChange(it)
             }
