@@ -19,6 +19,8 @@ sealed class WorkWithDrawingAction {
 
     object UpdatePhotoMode: WorkWithDrawingAction()
 
+    object UpdateSwipeMode: WorkWithDrawingAction()
+
     object ReturnBackScaleAndOffset: WorkWithDrawingAction()
 
     data class UpdateAudioNum(val num: Int) : WorkWithDrawingAction()

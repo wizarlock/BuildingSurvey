@@ -53,6 +53,9 @@ fun WorkWithDrawingScreen(
                 updatePhotoMode =  {
                     viewModel.onUiAction(WorkWithDrawingAction.UpdatePhotoMode)
                 },
+                updateSwipeMode =  {
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateSwipeMode)
+                },
                 returnBackScale = {
                     viewModel.onUiAction(WorkWithDrawingAction.ReturnBackScaleAndOffset)
                 }

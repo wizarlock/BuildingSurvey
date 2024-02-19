@@ -15,6 +15,7 @@ import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.P
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.RecordAudioIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.ReturnBackIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.SelectDrawingIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.SwipeIcon
 import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,6 +28,7 @@ fun TopAppBarForWorkWithDrawing(
     startRecord: () -> Unit,
     stopRecord: () -> Unit,
     updatePhotoMode: () -> Unit,
+    updateSwipeMode: () -> Unit,
     returnBackScale: () -> Unit
 ) {
     TopAppBar(
@@ -54,6 +56,10 @@ fun TopAppBarForWorkWithDrawing(
                 PhotoIcon(
                     uiState = uiState,
                     updatePhotoMode = updatePhotoMode
+                )
+                SwipeIcon(
+                    updateSwipeMode = updateSwipeMode,
+                    uiState = uiState
                 )
                 ReturnBackIcon(
                     returnBackScale = { returnBackScale() }

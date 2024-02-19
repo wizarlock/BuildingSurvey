@@ -71,6 +71,7 @@ class WorkWithDrawingViewModel @Inject constructor(
                     }.stateIn(viewModelScope),
                     photoMode = false,
                     audioMode = false,
+                    swipeMode = true,
                     scale = 1f,
                     offsetX = 0f,
                     offsetY = 0f
@@ -140,6 +141,14 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
+            WorkWithDrawingAction.UpdateSwipeMode -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        swipeMode = !uiState.value.swipeMode
+                    )
+                }
+            }
+
             WorkWithDrawingAction.ReturnBackScaleAndOffset -> {
                 _uiState.update {
                     uiState.value.copy(
@@ -196,6 +205,7 @@ data class WorkWithDrawingUiState(
     val audioNum: Int = 0,
     val photoNum: Int = 0,
     val photoMode: Boolean = false,
+    val swipeMode: Boolean = true,
     val audioMode: Boolean = false,
     val scale: Float = 1f,
     val offsetX: Float = 0f,
