@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.components.workWithDrawing.iconsForBotBarDefects
+package com.example.buildingsurvey.ui.components.workWithDrawing.botAppBar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,10 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
 
 @Composable
-fun TextIcon() {
+fun SelectSurveyIcon() {
     Box(
         modifier = Modifier
-            .size(40.dp)
             .background(Color.White)
             .border(2.dp, Color.Black)
             .clickable(onClick = { }),
@@ -28,7 +27,7 @@ fun TextIcon() {
         Image(
             painter = painterResource(id = R.drawable.big_logo),
             contentDescription = "select_survey",
-            modifier = Modifier.padding(5.dp)
+            modifier = Modifier.size(40.dp).padding(4.dp)
         )
     }
 }

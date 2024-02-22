@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.components.workWithDrawing.iconsForBotBarDefects
+package com.example.buildingsurvey.ui.components.workWithDrawing.botAppBar.iconsForBotBarDefects
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,21 +14,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
+import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @Composable
-fun LineSegmentIcon() {
+fun FrameIcon(
+    updateFrameSelected: () -> Unit,
+    uiState: WorkWithDrawingUiState
+) {
     Box(
         modifier = Modifier
-            .size(40.dp)
-            .background(Color.White)
+            .background(
+                if (!uiState.frameSelected) Color.Transparent
+                else Color.Green
+            )
             .border(2.dp, Color.Black)
-            .clickable(onClick = { }),
+            .clickable(
+                onClick = {
+                    updateFrameSelected()
+                }
+            ),
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.big_logo),
-            contentDescription = "select_survey",
-            modifier = Modifier.padding(5.dp)
+            painter = painterResource(id = R.drawable.rectangle),
+            contentDescription = "frame",
+            modifier = Modifier.size(40.dp).padding(4.dp)
         )
     }
 }

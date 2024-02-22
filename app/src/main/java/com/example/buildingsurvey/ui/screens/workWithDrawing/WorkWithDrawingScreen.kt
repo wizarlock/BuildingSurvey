@@ -16,9 +16,9 @@ import androidx.navigation.NavController
 import com.example.buildingsurvey.R
 import com.example.buildingsurvey.data.navigation.AddDefect
 import com.example.buildingsurvey.data.navigation.UpdateLabel
-import com.example.buildingsurvey.ui.components.workWithDrawing.BotAppBarWorkWithDrawing
+import com.example.buildingsurvey.ui.components.workWithDrawing.botAppBar.BotAppBarWorkWithDrawing
 import com.example.buildingsurvey.ui.components.workWithDrawing.drawingImage.DrawingImage
-import com.example.buildingsurvey.ui.components.workWithDrawing.TopAppBarForWorkWithDrawing
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.TopAppBarForWorkWithDrawing
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 
 @Composable
@@ -70,7 +70,22 @@ fun WorkWithDrawingScreen(
                 },
                 addTypeOfDefect = {
                     navController.navigate(AddDefect.route)
-                }
+                },
+                updateTextSelected = {
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateTextSelected)
+                },
+                updateFrameSelected = {
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateFrameSelected)
+                },
+                updateBrokenLineSelected = {
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateBrokenLineSelected)
+                },
+                updateLineSegmentSelected = {
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateLineSegmentSelected)
+                },
+                updatePointDefectSelected = {
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdatePointDefectSelected)
+                },
             )
         }
     )

@@ -71,6 +71,11 @@ class WorkWithDrawingViewModel @Inject constructor(
                     }.stateIn(viewModelScope),
                     photoMode = false,
                     audioMode = false,
+                    textSelected = false,
+                    frameSelected = false,
+                    brokenLineSelected = false,
+                    lineSegmentSelected = false,
+                    pointDefectSelected = false,
                     swipeMode = true,
                     scale = 1f,
                     offsetX = 0f,
@@ -149,6 +154,66 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
+            WorkWithDrawingAction.UpdateTextSelected -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        textSelected = !uiState.value.textSelected,
+                        frameSelected = false,
+                        brokenLineSelected = false,
+                        lineSegmentSelected = false,
+                        pointDefectSelected = false
+                    )
+                }
+            }
+
+            WorkWithDrawingAction.UpdateFrameSelected -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        textSelected = false,
+                        frameSelected = !uiState.value.frameSelected,
+                        brokenLineSelected = false,
+                        lineSegmentSelected = false,
+                        pointDefectSelected = false
+                    )
+                }
+            }
+
+            WorkWithDrawingAction.UpdateBrokenLineSelected  -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        textSelected = false,
+                        frameSelected = false,
+                        brokenLineSelected = !uiState.value.brokenLineSelected,
+                        lineSegmentSelected = false,
+                        pointDefectSelected = false
+                    )
+                }
+            }
+
+            WorkWithDrawingAction.UpdateLineSegmentSelected -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        textSelected = false,
+                        frameSelected = false,
+                        brokenLineSelected = false,
+                        lineSegmentSelected = !uiState.value.lineSegmentSelected,
+                        pointDefectSelected = false
+                    )
+                }
+            }
+
+            WorkWithDrawingAction.UpdatePointDefectSelected -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        textSelected = false,
+                        frameSelected = false,
+                        brokenLineSelected = false,
+                        lineSegmentSelected = false,
+                        pointDefectSelected = !uiState.value.pointDefectSelected
+                    )
+                }
+            }
+
             WorkWithDrawingAction.ReturnBackScaleAndOffset -> {
                 _uiState.update {
                     uiState.value.copy(
@@ -204,6 +269,11 @@ data class WorkWithDrawingUiState(
     var selectedType: TypeOfDefect = TypeOfDefect(),
     val audioNum: Int = 0,
     val photoNum: Int = 0,
+    val textSelected: Boolean = false,
+    val frameSelected: Boolean = false,
+    val brokenLineSelected: Boolean = false,
+    val lineSegmentSelected: Boolean = false,
+    val pointDefectSelected: Boolean = false,
     val photoMode: Boolean = false,
     val swipeMode: Boolean = true,
     val audioMode: Boolean = false,

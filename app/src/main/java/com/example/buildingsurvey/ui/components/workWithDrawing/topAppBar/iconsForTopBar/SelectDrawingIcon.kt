@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar
+package com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

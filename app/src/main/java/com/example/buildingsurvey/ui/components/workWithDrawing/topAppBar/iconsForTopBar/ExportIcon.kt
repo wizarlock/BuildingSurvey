@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar
+package com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
 
 @Composable
-fun ForwardIcon() {
+fun ExportIcon() {
     Box(
         modifier = Modifier
             .background(Color.Transparent)
@@ -26,8 +26,8 @@ fun ForwardIcon() {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.forward),
-            contentDescription = "Forward",
+            painter = painterResource(id = R.drawable.export),
+            contentDescription = "Export",
             modifier = Modifier.size(32.dp)
         )
     }

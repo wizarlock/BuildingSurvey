@@ -21,6 +21,16 @@ sealed class WorkWithDrawingAction {
 
     object UpdateSwipeMode: WorkWithDrawingAction()
 
+    object UpdateTextSelected: WorkWithDrawingAction()
+
+    object UpdateFrameSelected: WorkWithDrawingAction()
+
+    object UpdateBrokenLineSelected: WorkWithDrawingAction()
+
+    object UpdateLineSegmentSelected: WorkWithDrawingAction()
+
+    object UpdatePointDefectSelected: WorkWithDrawingAction()
+
     object ReturnBackScaleAndOffset: WorkWithDrawingAction()
 
     data class UpdateAudioNum(val num: Int) : WorkWithDrawingAction()

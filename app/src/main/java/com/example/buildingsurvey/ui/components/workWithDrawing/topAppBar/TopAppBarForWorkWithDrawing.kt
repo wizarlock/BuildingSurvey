@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.components.workWithDrawing
+package com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -9,14 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.buildingsurvey.data.model.Drawing
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.BackIcon
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.ExportIcon
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.ForwardIcon
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.PhotoIcon
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.RecordAudioIcon
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.ReturnBackIcon
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.SelectDrawingIcon
-import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.SwipeIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.BackIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.ExportIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.ForwardIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.PhotoIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.RecordAudioIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.ReturnBackIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.SelectDrawingIcon
+import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.SwipeIcon
 import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @OptIn(ExperimentalMaterial3Api::class)

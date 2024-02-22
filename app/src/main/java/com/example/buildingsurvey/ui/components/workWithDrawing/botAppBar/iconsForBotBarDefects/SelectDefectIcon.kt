@@ -1,4 +1,4 @@
-package com.example.buildingsurvey.ui.components.workWithDrawing.iconsForBotBarDefects
+package com.example.buildingsurvey.ui.components.workWithDrawing.botAppBar.iconsForBotBarDefects
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -47,7 +47,7 @@ fun SelectDefectIcon(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .background(Color.White)
+                .background(Color.Transparent)
                 .border(2.dp, Color.Black)
                 .clickable(onClick = { expanded = !expanded }),
             contentAlignment = Alignment.Center
