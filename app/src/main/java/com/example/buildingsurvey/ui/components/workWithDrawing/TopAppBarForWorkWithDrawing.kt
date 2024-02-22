@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.ui.components.workWithDrawing.iconsForTopBar.BackIcon
@@ -37,7 +38,8 @@ fun TopAppBarForWorkWithDrawing(
         actions = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 SelectDrawingIcon(
                     selectDrawing = { drawing ->
