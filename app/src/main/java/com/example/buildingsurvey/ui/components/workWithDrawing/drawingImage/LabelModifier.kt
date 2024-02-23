@@ -12,11 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.data.model.Label
+import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @Composable
 fun labelModifier(
-    photoMode: Boolean,
-    swipeMode: Boolean,
+    uiState: WorkWithDrawingUiState,
     label: Label,
     onLabelClick: (Label) -> Unit
 ): Modifier {
@@ -36,7 +36,15 @@ fun labelModifier(
             shape = CircleShape
         )
 
-    return if (!photoMode && !swipeMode)
+    return if (
+        !uiState.photoMode &&
+        !uiState.swipeMode &&
+        !uiState.lineSegmentSelected &&
+        !uiState.brokenLineSelected &&
+        !uiState.pointDefectSelected &&
+        !uiState.frameSelected &&
+        !uiState.textSelected
+    )
         defaultLabelModifier.pointerInput(Unit) {
             detectTapGestures(
                 onTap = {

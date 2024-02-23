@@ -30,7 +30,8 @@ fun SwipeIcon(
             .border(2.dp, Color.Black)
             .clickable(
                 onClick = {
-                    updateSwipeMode()
+                    if (!uiState.drawingBrokenLine)
+                        updateSwipeMode()
                 }
             ),
         contentAlignment = Alignment.Center
@@ -38,7 +39,9 @@ fun SwipeIcon(
         Image(
             painter = painterResource(id = R.drawable.swipe),
             contentDescription = "swipe",
-            modifier = Modifier.size(32.dp).padding(4.dp)
+            modifier = Modifier
+                .size(32.dp)
+                .padding(4.dp)
         )
     }
 }

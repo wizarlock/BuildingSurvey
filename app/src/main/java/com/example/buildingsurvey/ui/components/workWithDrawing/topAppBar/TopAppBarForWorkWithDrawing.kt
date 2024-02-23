@@ -24,8 +24,6 @@ import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiSt
 fun TopAppBarForWorkWithDrawing(
     uiState: WorkWithDrawingUiState,
     selectDrawing: (Drawing) -> Unit,
-    currentDrawing: Drawing,
-    listOfDrawings: List<Drawing>,
     startRecord: () -> Unit,
     stopRecord: () -> Unit,
     updatePhotoMode: () -> Unit,
@@ -45,11 +43,15 @@ fun TopAppBarForWorkWithDrawing(
                     selectDrawing = { drawing ->
                         selectDrawing(drawing)
                     },
-                    currentDrawing = currentDrawing,
-                    listOfDrawings = listOfDrawings
+                    uiState = uiState
                 )
-                BackIcon()
-                ForwardIcon()
+
+                BackIcon(
+                    uiState = uiState
+                )
+                ForwardIcon(
+                    uiState = uiState
+                )
                 RecordAudioIcon(
                     startRecord = { startRecord() },
                     stopRecord = { stopRecord() },
@@ -64,9 +66,12 @@ fun TopAppBarForWorkWithDrawing(
                     uiState = uiState
                 )
                 ReturnBackIcon(
+                    uiState = uiState,
                     returnBackScale = { returnBackScale() }
                 )
-                ExportIcon()
+                ExportIcon(
+                    uiState = uiState
+                )
             }
         }
     )

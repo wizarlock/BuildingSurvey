@@ -12,15 +12,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
+import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @Composable
-fun ExportIcon() {
+fun ExportIcon(
+    uiState: WorkWithDrawingUiState
+) {
     Box(
         modifier = Modifier
             .background(Color.Transparent)
             .clickable(
                 onClick = {
-
+                    if (!uiState.drawingBrokenLine) {
+                        
+                    }
                 }
             ),
         contentAlignment = Alignment.Center

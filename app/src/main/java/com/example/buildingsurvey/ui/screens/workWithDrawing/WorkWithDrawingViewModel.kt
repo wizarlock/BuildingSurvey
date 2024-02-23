@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.buildingsurvey.data.RepositoryInterface
 import com.example.buildingsurvey.data.datastore.DataStoreManager
+import com.example.buildingsurvey.data.model.Defect
+import com.example.buildingsurvey.data.model.DefectPoint
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.TypeOfDefect
@@ -69,10 +71,17 @@ class WorkWithDrawingViewModel @Inject constructor(
                     labels = repository.labelsList.map { labels ->
                         labels.filter { it.drawingId == repository.currentDrawing.id }
                     }.stateIn(viewModelScope),
+                    defectsList = repository.defectsList.map { defects ->
+                        defects.filter { it.drawingId == repository.currentDrawing.id }
+                    }.stateIn(viewModelScope),
+                    defectPointsList = repository.defectPointsList.map { defectPoints ->
+                        defectPoints.filter { it.drawingId == repository.currentDrawing.id }
+                    }.stateIn(viewModelScope),
                     photoMode = false,
                     audioMode = false,
                     textSelected = false,
                     frameSelected = false,
+                    drawingBrokenLine = false,
                     brokenLineSelected = false,
                     lineSegmentSelected = false,
                     pointDefectSelected = false,
@@ -146,6 +155,14 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
+            WorkWithDrawingAction.UpdateDrawingBrokenLine -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        drawingBrokenLine = !uiState.value.drawingBrokenLine
+                    )
+                }
+            }
+
             WorkWithDrawingAction.UpdateSwipeMode -> {
                 _uiState.update {
                     uiState.value.copy(
@@ -178,7 +195,7 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
-            WorkWithDrawingAction.UpdateBrokenLineSelected  -> {
+            WorkWithDrawingAction.UpdateBrokenLineSelected -> {
                 _uiState.update {
                     uiState.value.copy(
                         textSelected = false,
@@ -253,6 +270,28 @@ class WorkWithDrawingViewModel @Inject constructor(
                     )
                 }
             }
+
+            is WorkWithDrawingAction.AddDefect -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val defect = Defect(
+                        drawingId = uiState.value.currentDrawing.id,
+                        hexCode = uiState.value.selectedType.hexCode
+                    )
+                    val listOfPoints = mutableListOf<DefectPoint>()
+                    for (index in action.points.indices) {
+                        listOfPoints.add(
+                            DefectPoint(
+                                defectId = defect.id,
+                                drawingId = uiState.value.currentDrawing.id,
+                                position = index,
+                                xInApp = action.points[index].x,
+                                yInApp = action.points[index].y
+                            )
+                        )
+                    }
+                    repository.addDefect(defect = defect, points = listOfPoints)
+                }
+            }
         }
     }
 }
@@ -262,14 +301,19 @@ data class WorkWithDrawingUiState(
     private val _drawings: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf()),
     private val _labels: MutableStateFlow<List<Label>> = MutableStateFlow(listOf()),
     private val _typeOfDefect: MutableStateFlow<List<TypeOfDefect>> = MutableStateFlow(listOf()),
+    private val _defectsList: MutableStateFlow<List<Defect>> = MutableStateFlow(listOf()),
+    private val _defectPointsList: MutableStateFlow<List<DefectPoint>> = MutableStateFlow(listOf()),
 
     val typeOfDefect: StateFlow<List<TypeOfDefect>> = _typeOfDefect.asStateFlow(),
     val drawings: StateFlow<List<Drawing>> = _drawings.asStateFlow(),
     val labels: StateFlow<List<Label>> = _labels.asStateFlow(),
+    val defectsList: StateFlow<List<Defect>> = _defectsList.asStateFlow(),
+    val defectPointsList: StateFlow<List<DefectPoint>> = _defectPointsList.asStateFlow(),
     var selectedType: TypeOfDefect = TypeOfDefect(),
     val audioNum: Int = 0,
     val photoNum: Int = 0,
     val textSelected: Boolean = false,
+    val drawingBrokenLine: Boolean = false,
     val frameSelected: Boolean = false,
     val brokenLineSelected: Boolean = false,
     val lineSegmentSelected: Boolean = false,

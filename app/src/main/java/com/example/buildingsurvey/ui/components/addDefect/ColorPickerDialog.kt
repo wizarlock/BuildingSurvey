@@ -2,6 +2,7 @@ package com.example.buildingsurvey.ui.components.addDefect
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,7 +34,14 @@ fun ColorPickerDialog(
     val currentColor = remember { mutableStateOf("") }
     val controller = rememberColorPickerController()
     AlertDialog(
-        title = {},
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = stringResource(id = R.string.select_layer_color))
+            }
+        },
         text = {
             Column(
                 modifier = Modifier

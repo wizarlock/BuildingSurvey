@@ -36,8 +36,10 @@ fun PhotoIcon(
             .border(2.dp, Color.Black)
             .clickable(
                 onClick = {
-                    if (permissionState.hasPermission) updatePhotoMode()
-                    else permissionState.launchPermissionRequest()
+                    if (!uiState.drawingBrokenLine) {
+                        if (permissionState.hasPermission) updatePhotoMode()
+                        else permissionState.launchPermissionRequest()
+                    }
                 }
             ),
         contentAlignment = Alignment.Center
@@ -45,7 +47,9 @@ fun PhotoIcon(
         Image(
             painter = painterResource(id = R.drawable.take_photo),
             contentDescription = "photo",
-            modifier = Modifier.size(32.dp).padding(4.dp)
+            modifier = Modifier
+                .size(32.dp)
+                .padding(4.dp)
         )
     }
 }

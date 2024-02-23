@@ -41,10 +41,12 @@ fun RecordAudioIcon(
             .border(2.dp, Color.Black, CircleShape)
             .clickable(
                 onClick = {
-                    if (permissionState.hasPermission)
-                        if (!uiState.audioMode) startRecord()
-                        else stopRecord()
-                    else permissionState.launchPermissionRequest()
+                    if (!uiState.drawingBrokenLine) {
+                        if (permissionState.hasPermission)
+                            if (!uiState.audioMode) startRecord()
+                            else stopRecord()
+                        else permissionState.launchPermissionRequest()
+                    }
                 }
             ),
         contentAlignment = Alignment.Center

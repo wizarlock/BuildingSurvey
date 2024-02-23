@@ -39,8 +39,6 @@ fun WorkWithDrawingScreen(
                     if (uiState.audioMode) Toast.makeText(context, stop, Toast.LENGTH_SHORT).show()
                     viewModel.onUiAction(WorkWithDrawingAction.UpdateDrawing(drawing))
                 },
-                currentDrawing = uiState.currentDrawing,
-                listOfDrawings = uiState.drawings.collectAsState().value,
                 startRecord = {
                     Toast.makeText(context, start, Toast.LENGTH_SHORT).show()
                     viewModel.onUiAction(WorkWithDrawingAction.StartRecord(uiState.audioNum.toString()))

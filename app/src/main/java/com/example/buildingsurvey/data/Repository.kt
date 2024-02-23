@@ -21,11 +21,14 @@ import com.example.buildingsurvey.data.db.dao.LabelDao
 import com.example.buildingsurvey.data.db.dao.ProjectDao
 import com.example.buildingsurvey.data.db.dao.TypeOfDefectDao
 import com.example.buildingsurvey.data.model.Audio
+import com.example.buildingsurvey.data.model.Defect
+import com.example.buildingsurvey.data.model.DefectPoint
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
 import com.example.buildingsurvey.data.model.TypeOfDefect
 import com.example.buildingsurvey.ui.screens.AudioAttachment
+import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 import com.example.buildingsurvey.utils.toAudio
 import com.example.buildingsurvey.utils.toAudioDbEntity
 import com.example.buildingsurvey.utils.toDrawing
@@ -63,12 +66,16 @@ class Repository @Inject constructor(
     private val _drawingsList: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf())
     private val _labelsList: MutableStateFlow<List<Label>> = MutableStateFlow(listOf())
     private val _typeOfDefectList: MutableStateFlow<List<TypeOfDefect>> = MutableStateFlow(listOf())
+    private val _defectsList: MutableStateFlow<List<Defect>> = MutableStateFlow(listOf())
+    private val _defectPointsList: MutableStateFlow<List<DefectPoint>> = MutableStateFlow(listOf())
     private var recorder: MediaRecorder? = null
 
     override val projectsList = _projectsList.asStateFlow()
     override val drawingsList = _drawingsList.asStateFlow()
     override val audioList = _audioList.asStateFlow()
     override val labelsList = _labelsList.asStateFlow()
+    override val defectsList = _defectsList.asStateFlow()
+    override val defectPointsList = _defectPointsList.asStateFlow()
     override val typeOfDefectList = _typeOfDefectList.asStateFlow()
 
     override var currentProject = Project()
@@ -262,6 +269,22 @@ class Repository @Inject constructor(
         BitmapFactory.decodeFile(currentDrawing.drawingFilePath, options)
         return Pair(options.outWidth, options.outHeight)
     }
+
+    override suspend fun addDefect(defect: Defect, points: List<DefectPoint>) =
+        withContext(Dispatchers.IO) {
+            _defectsList.update { currentList ->
+                val updatedList = currentList.toMutableList()
+                updatedList.add(defect)
+                updatedList.toList()
+            }
+            _defectPointsList.update { currentList ->
+                val updatedList = currentList.toMutableList()
+                points.forEach { point ->
+                    updatedList.add(point)
+                }
+                updatedList.toList()
+            }
+        }
 
     override suspend fun saveLabel() {
         val outputFile = File(currentLabel.labelFilePath)

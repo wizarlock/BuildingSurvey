@@ -10,6 +10,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,12 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.buildingsurvey.R
 import com.example.buildingsurvey.data.model.Drawing
+import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @Composable
 fun SelectDrawingIcon(
     selectDrawing: (Drawing) -> Unit,
-    currentDrawing: Drawing,
-    listOfDrawings: List<Drawing>
+    uiState: WorkWithDrawingUiState
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -40,7 +41,8 @@ fun SelectDrawingIcon(
                 .background(Color.Transparent)
                 .clickable(
                     onClick = {
-                        expanded = !expanded
+                        if (!uiState.drawingBrokenLine)
+                            expanded = !expanded
                     }
                 ),
             contentAlignment = Alignment.Center
@@ -56,19 +58,19 @@ fun SelectDrawingIcon(
             onDismissRequest = { expanded = false },
             modifier = Modifier.heightIn(max = 500.dp)
         ) {
-            for (drawing in listOfDrawings)
+            for (drawing in uiState.drawings.collectAsState().value)
                 DropdownMenuItem(
                     text = {
                         Text(
                             text = drawing.name,
                             fontSize = 18.sp,
-                            style = if (currentDrawing == drawing) TextStyle(textDecoration = TextDecoration.Underline)
+                            style = if (uiState.currentDrawing == drawing) TextStyle(textDecoration = TextDecoration.Underline)
                             else TextStyle(),
-                            fontWeight = if (currentDrawing == drawing) FontWeight.Bold else FontWeight.Normal
+                            fontWeight = if (uiState.currentDrawing == drawing) FontWeight.Bold else FontWeight.Normal
                         )
                     },
                     onClick = {
-                        if (currentDrawing != drawing) selectDrawing(drawing)
+                        if (uiState.currentDrawing != drawing) selectDrawing(drawing)
                         expanded = false
                     }
                 )

@@ -15,7 +15,11 @@ sealed class WorkWithDrawingAction {
 
     data class UpdateScaleAndOffset (val pan: Offset, val zoom: Float) : WorkWithDrawingAction()
 
+    data class AddDefect (val points: List<Offset>) : WorkWithDrawingAction()
+
     object StopRecord : WorkWithDrawingAction()
+
+    object UpdateDrawingBrokenLine : WorkWithDrawingAction()
 
     object UpdatePhotoMode: WorkWithDrawingAction()
 

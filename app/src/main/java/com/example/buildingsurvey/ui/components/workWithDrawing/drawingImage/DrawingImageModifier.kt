@@ -1,6 +1,5 @@
 package com.example.buildingsurvey.ui.components.workWithDrawing.drawingImage
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.provider.MediaStore
@@ -23,8 +22,7 @@ import java.io.File
 import java.util.UUID
 
 @Composable
-fun drawingImageModifier(
-    photoMode: Boolean,
+fun boxForScaleModifier(
     uiState: WorkWithDrawingUiState,
     uiAction: (WorkWithDrawingAction) -> Unit
 ): Modifier {
@@ -59,7 +57,14 @@ fun drawingImageModifier(
             translationY = uiState.offsetY
         )
 
-    return if (photoMode) {
+    return if (
+        uiState.photoMode &&
+        !uiState.lineSegmentSelected &&
+        !uiState.brokenLineSelected &&
+        !uiState.pointDefectSelected &&
+        !uiState.frameSelected &&
+        !uiState.textSelected
+    ) {
         defaultImageModifier.pointerInput(Unit) {
             detectTapGestures { offset ->
                 val offsetInDp = with(currentDensity) {

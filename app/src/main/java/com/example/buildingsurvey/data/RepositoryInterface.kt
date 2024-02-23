@@ -2,6 +2,8 @@ package com.example.buildingsurvey.data
 
 import android.net.Uri
 import com.example.buildingsurvey.data.model.Audio
+import com.example.buildingsurvey.data.model.Defect
+import com.example.buildingsurvey.data.model.DefectPoint
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
@@ -19,6 +21,10 @@ interface RepositoryInterface {
     val labelsList: StateFlow<List<Label>>
 
     val typeOfDefectList: StateFlow<List<TypeOfDefect>>
+
+    val defectsList: StateFlow<List<Defect>>
+
+    val defectPointsList: StateFlow<List<DefectPoint>>
 
     var currentProject: Project
 
@@ -51,4 +57,6 @@ interface RepositoryInterface {
     suspend fun addTypeOfDefect(typeOfDefect: TypeOfDefect)
 
     suspend fun loadDataFromDB()
+
+    suspend fun addDefect(defect: Defect, points: List<DefectPoint>)
 }
