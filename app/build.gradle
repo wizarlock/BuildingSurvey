@@ -101,4 +101,6 @@ dependencies {
     implementation("com.github.skydoves:colorpicker-compose:1.0.4")
 
     implementation 'commons-io:commons-io:2.15.0'
+
+    testImplementation 'junit:junit:4.13.2'
 }

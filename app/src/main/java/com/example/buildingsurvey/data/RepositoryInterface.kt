@@ -46,6 +46,8 @@ interface RepositoryInterface {
 
     suspend fun addDrawing(drawing: Drawing)
 
+    suspend fun removeDefect(defect: Defect)
+
     suspend fun removeDrawing(drawing: Drawing)
 
     suspend fun addLabel(x: Float, y: Float, name: String, width: Float, height: Float)

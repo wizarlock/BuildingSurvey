@@ -8,6 +8,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.buildingsurvey.data.model.Defect
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.BackIcon
 import com.example.buildingsurvey.ui.components.workWithDrawing.topAppBar.iconsForTopBar.ExportIcon
@@ -28,7 +29,9 @@ fun TopAppBarForWorkWithDrawing(
     stopRecord: () -> Unit,
     updatePhotoMode: () -> Unit,
     updateSwipeMode: () -> Unit,
-    returnBackScale: () -> Unit
+    returnBackScale: () -> Unit,
+    removeDefect: (Defect) -> Unit,
+    returnDefect: (Defect) -> Unit
 ) {
     TopAppBar(
         title = {},
@@ -47,10 +50,12 @@ fun TopAppBarForWorkWithDrawing(
                 )
 
                 BackIcon(
+                    removeDefect = { defect -> removeDefect(defect) },
                     uiState = uiState
                 )
                 ForwardIcon(
-                    uiState = uiState
+                    uiState = uiState,
+                    returnDefect = { defect -> returnDefect(defect) }
                 )
                 RecordAudioIcon(
                     startRecord = { startRecord() },

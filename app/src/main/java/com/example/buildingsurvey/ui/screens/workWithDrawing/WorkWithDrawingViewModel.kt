@@ -77,6 +77,9 @@ class WorkWithDrawingViewModel @Inject constructor(
                     defectPointsList = repository.defectPointsList.map { defectPoints ->
                         defectPoints.filter { it.drawingId == repository.currentDrawing.id }
                     }.stateIn(viewModelScope),
+                    changesList = ChangesList(),
+                    isBackEnable = false,
+                    isForwardEnable = false,
                     photoMode = false,
                     audioMode = false,
                     textSelected = false,
@@ -174,11 +177,11 @@ class WorkWithDrawingViewModel @Inject constructor(
             WorkWithDrawingAction.UpdateTextSelected -> {
                 _uiState.update {
                     uiState.value.copy(
-                        textSelected = !uiState.value.textSelected,
                         frameSelected = false,
                         brokenLineSelected = false,
                         lineSegmentSelected = false,
-                        pointDefectSelected = false
+                        pointDefectSelected = false,
+                        textSelected = !uiState.value.textSelected,
                     )
                 }
             }
@@ -186,11 +189,11 @@ class WorkWithDrawingViewModel @Inject constructor(
             WorkWithDrawingAction.UpdateFrameSelected -> {
                 _uiState.update {
                     uiState.value.copy(
-                        textSelected = false,
-                        frameSelected = !uiState.value.frameSelected,
                         brokenLineSelected = false,
                         lineSegmentSelected = false,
-                        pointDefectSelected = false
+                        pointDefectSelected = false,
+                        textSelected = false,
+                        frameSelected = !uiState.value.frameSelected,
                     )
                 }
             }
@@ -198,11 +201,11 @@ class WorkWithDrawingViewModel @Inject constructor(
             WorkWithDrawingAction.UpdateBrokenLineSelected -> {
                 _uiState.update {
                     uiState.value.copy(
+                        lineSegmentSelected = false,
+                        pointDefectSelected = false,
                         textSelected = false,
                         frameSelected = false,
                         brokenLineSelected = !uiState.value.brokenLineSelected,
-                        lineSegmentSelected = false,
-                        pointDefectSelected = false
                     )
                 }
             }
@@ -210,11 +213,11 @@ class WorkWithDrawingViewModel @Inject constructor(
             WorkWithDrawingAction.UpdateLineSegmentSelected -> {
                 _uiState.update {
                     uiState.value.copy(
+                        pointDefectSelected = false,
                         textSelected = false,
                         frameSelected = false,
                         brokenLineSelected = false,
                         lineSegmentSelected = !uiState.value.lineSegmentSelected,
-                        pointDefectSelected = false
                     )
                 }
             }
@@ -271,12 +274,37 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
+            is WorkWithDrawingAction.RemoveDefect -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.removeDefect(defect = action.defect)
+                    _uiState.update {
+                        uiState.value.copy(
+                            isForwardEnable = uiState.value.changesList.forwardIsAvailable(),
+                            isBackEnable = uiState.value.changesList.backIsAvailable()
+                        )
+                    }
+                }
+            }
+
+            is WorkWithDrawingAction.ReturnDefect -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.addDefect(defect = action.defect, points = listOf())
+                    _uiState.update {
+                        uiState.value.copy(
+                            isForwardEnable = uiState.value.changesList.forwardIsAvailable(),
+                            isBackEnable = uiState.value.changesList.backIsAvailable()
+                        )
+                    }
+                }
+            }
+
             is WorkWithDrawingAction.AddDefect -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     val defect = Defect(
                         drawingId = uiState.value.currentDrawing.id,
                         hexCode = uiState.value.selectedType.hexCode
                     )
+                    uiState.value.changesList.add(value = defect)
                     val listOfPoints = mutableListOf<DefectPoint>()
                     for (index in action.points.indices) {
                         listOfPoints.add(
@@ -290,6 +318,12 @@ class WorkWithDrawingViewModel @Inject constructor(
                         )
                     }
                     repository.addDefect(defect = defect, points = listOfPoints)
+                    _uiState.update {
+                        uiState.value.copy(
+                            isForwardEnable = uiState.value.changesList.forwardIsAvailable(),
+                            isBackEnable = uiState.value.changesList.backIsAvailable()
+                        )
+                    }
                 }
             }
         }
@@ -304,6 +338,9 @@ data class WorkWithDrawingUiState(
     private val _defectsList: MutableStateFlow<List<Defect>> = MutableStateFlow(listOf()),
     private val _defectPointsList: MutableStateFlow<List<DefectPoint>> = MutableStateFlow(listOf()),
 
+    val changesList: ChangesList = ChangesList(),
+    val isForwardEnable: Boolean = false,
+    val isBackEnable: Boolean  = false,
     val typeOfDefect: StateFlow<List<TypeOfDefect>> = _typeOfDefect.asStateFlow(),
     val drawings: StateFlow<List<Drawing>> = _drawings.asStateFlow(),
     val labels: StateFlow<List<Label>> = _labels.asStateFlow(),

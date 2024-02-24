@@ -48,14 +48,20 @@ fun WorkWithDrawingScreen(
                     Toast.makeText(context, stop, Toast.LENGTH_SHORT).show()
                     viewModel.onUiAction(WorkWithDrawingAction.StopRecord)
                 },
-                updatePhotoMode =  {
+                updatePhotoMode = {
                     viewModel.onUiAction(WorkWithDrawingAction.UpdatePhotoMode)
                 },
-                updateSwipeMode =  {
+                updateSwipeMode = {
                     viewModel.onUiAction(WorkWithDrawingAction.UpdateSwipeMode)
                 },
                 returnBackScale = {
                     viewModel.onUiAction(WorkWithDrawingAction.ReturnBackScaleAndOffset)
+                },
+                removeDefect = { defect ->
+                    viewModel.onUiAction(WorkWithDrawingAction.RemoveDefect(defect))
+                },
+                returnDefect = { defect ->
+                    viewModel.onUiAction(WorkWithDrawingAction.ReturnDefect(defect))
                 }
             )
         },
@@ -64,7 +70,11 @@ fun WorkWithDrawingScreen(
             BotAppBarWorkWithDrawing(
                 uiState = uiState,
                 updateSelectedTypeOfDefect = { typeOfDefect ->
-                    viewModel.onUiAction(WorkWithDrawingAction.UpdateSelectedTypeOfDefect(typeOfDefect))
+                    viewModel.onUiAction(
+                        WorkWithDrawingAction.UpdateSelectedTypeOfDefect(
+                            typeOfDefect
+                        )
+                    )
                 },
                 addTypeOfDefect = {
                     navController.navigate(AddDefect.route)

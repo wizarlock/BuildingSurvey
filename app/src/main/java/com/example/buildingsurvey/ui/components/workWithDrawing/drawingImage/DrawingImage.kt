@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,7 +31,7 @@ fun DrawingImage(
     uiAction: (WorkWithDrawingAction) -> Unit,
     onLabelClick: (Label) -> Unit
 ) {
-    val linesSegment = remember { mutableStateListOf<Pair<Offset, Offset>>() }
+    val line = remember { mutableStateListOf<Offset>() }
     val defectsList = uiState.defectsList.collectAsState().value
     val defectPoints = uiState.defectPointsList.collectAsState().value
 
@@ -55,7 +56,7 @@ fun DrawingImage(
                     .size(Size.ORIGINAL)
                     .build(),
                 modifier = asyncImageModifier(
-                    lines = linesSegment,
+                    line = line,
                     uiState = uiState,
                     uiAction = uiAction
                 )
@@ -98,13 +99,24 @@ fun DrawingImage(
                     when (pointsOfDefect.size) {
                         1 -> {
                             drawCircle(
-                                color = Color.Black,
-                                radius = 2.dp.toPx(),
+                                color = Color(android.graphics.Color.parseColor(defect.hexCode)),
+                                style = Stroke(width =  0.5.dp.toPx()),
                                 center = Offset(
                                     (pointsOfDefect.first().xInApp.dp).toPx(),
                                     (pointsOfDefect.first().yInApp.dp).toPx()
-                                )
+                                ),
+                                radius = 1.75.dp.toPx()
                             )
+
+                            drawCircle(
+                                color = Color(android.graphics.Color.parseColor(defect.hexCode)),
+                                radius = 0.6.dp.toPx(),
+                                center = Offset(
+                                    (pointsOfDefect.first().xInApp.dp).toPx(),
+                                    (pointsOfDefect.first().yInApp.dp).toPx()
+                                ),
+                            )
+
                         }
 
                         2 -> drawLine(
@@ -138,19 +150,11 @@ fun DrawingImage(
                     }
                 }
 
-                if (uiState.lineSegmentSelected && linesSegment.size == 2)
+                if ((uiState.lineSegmentSelected || uiState.brokenLineSelected) && line.size == 2)
                     drawLine(
                         color = Color(android.graphics.Color.parseColor(uiState.selectedType.hexCode)),
-                        start = linesSegment.first().first,
-                        end = linesSegment.last().second,
-                        strokeWidth = 2f
-                    )
-
-                if (uiState.brokenLineSelected && linesSegment.size == 2)
-                    drawLine(
-                        color = Color(android.graphics.Color.parseColor(uiState.selectedType.hexCode)),
-                        start = linesSegment.first().first,
-                        end = linesSegment.last().second,
+                        start = line.first(),
+                        end = line.last(),
                         strokeWidth = 2f
                     )
             }

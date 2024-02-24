@@ -286,6 +286,13 @@ class Repository @Inject constructor(
             }
         }
 
+    override suspend fun removeDefect(defect: Defect) =
+        withContext(Dispatchers.IO) {
+            _defectsList.update { currentList ->
+                currentList.filterNot { it == defect }
+            }
+        }
+
     override suspend fun saveLabel() {
         val outputFile = File(currentLabel.labelFilePath)
         tempFile = Compressor.compress(applicationContext, tempFile!!)
