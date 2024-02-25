@@ -1,5 +1,6 @@
 package com.example.buildingsurvey.ui.screens.workWithDrawing
 
+import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.buildingsurvey.data.RepositoryInterface
@@ -8,8 +9,10 @@ import com.example.buildingsurvey.data.model.Defect
 import com.example.buildingsurvey.data.model.DefectPoint
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
+import com.example.buildingsurvey.data.model.Text
 import com.example.buildingsurvey.data.model.TypeOfDefect
 import com.example.buildingsurvey.ui.screens.AudioAttachment
+import com.example.buildingsurvey.ui.screens.isValidName
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +80,13 @@ class WorkWithDrawingViewModel @Inject constructor(
                     defectPointsList = repository.defectPointsList.map { defectPoints ->
                         defectPoints.filter { it.drawingId == repository.currentDrawing.id }
                     }.stateIn(viewModelScope),
+                    texts = repository.textList.map { texts ->
+                        texts.filter { it.drawingId == repository.currentDrawing.id }
+                    }.stateIn(viewModelScope),
                     changesList = ChangesList(),
+                    linesForBrokenLine = mutableListOf(),
+                    text = "",
+                    coordinatesOfText = Pair(-1f, -1f),
                     isBackEnable = false,
                     isForwardEnable = false,
                     photoMode = false,
@@ -122,9 +131,11 @@ class WorkWithDrawingViewModel @Inject constructor(
             }
 
             is WorkWithDrawingAction.UpdateDrawing -> {
-                if (uiState.value.audioMode) onUiAction(WorkWithDrawingAction.StopRecord)
-                repository.currentDrawing = action.drawing
-                initDrawing()
+                viewModelScope.launch(Dispatchers.IO) {
+                    if (uiState.value.audioMode) onUiAction(WorkWithDrawingAction.StopRecord)
+                    repository.updateCurrentDrawing(drawing = action.drawing)
+                    initDrawing()
+                }
             }
 
             is WorkWithDrawingAction.UpdateScaleAndOffset -> {
@@ -158,10 +169,10 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
-            WorkWithDrawingAction.UpdateDrawingBrokenLine -> {
+            is WorkWithDrawingAction.UpdateDrawingBrokenLine -> {
                 _uiState.update {
                     uiState.value.copy(
-                        drawingBrokenLine = !uiState.value.drawingBrokenLine
+                        drawingBrokenLine = action.isDrawing
                     )
                 }
             }
@@ -258,9 +269,7 @@ class WorkWithDrawingViewModel @Inject constructor(
                         repository.addLabel(
                             x = action.x,
                             y = action.y,
-                            name = newPhotoNum.toString(),
-                            width = action.width,
-                            height = action.height
+                            name = newPhotoNum.toString()
                         )
                     }
                 }
@@ -274,9 +283,12 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
-            is WorkWithDrawingAction.RemoveDefect -> {
+            is WorkWithDrawingAction.Back -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    repository.removeDefect(defect = action.defect)
+                    when (action.value) {
+                        is Defect -> repository.removeDefect(defect = action.value)
+                        is Text -> repository.removeText(text = action.value)
+                    }
                     _uiState.update {
                         uiState.value.copy(
                             isForwardEnable = uiState.value.changesList.forwardIsAvailable(),
@@ -286,9 +298,13 @@ class WorkWithDrawingViewModel @Inject constructor(
                 }
             }
 
-            is WorkWithDrawingAction.ReturnDefect -> {
+            is WorkWithDrawingAction.Forward -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    repository.addDefect(defect = action.defect, points = listOf())
+                    when (action.value) {
+                        is Defect -> repository.addDefect(defect = action.value, points = listOf())
+                        is Text -> repository.addText(text = action.value)
+                    }
+
                     _uiState.update {
                         uiState.value.copy(
                             isForwardEnable = uiState.value.changesList.forwardIsAvailable(),
@@ -302,7 +318,8 @@ class WorkWithDrawingViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
                     val defect = Defect(
                         drawingId = uiState.value.currentDrawing.id,
-                        hexCode = uiState.value.selectedType.hexCode
+                        hexCode = uiState.value.selectedType.hexCode,
+                        isClosed = action.isClosed
                     )
                     uiState.value.changesList.add(value = defect)
                     val listOfPoints = mutableListOf<DefectPoint>()
@@ -326,7 +343,60 @@ class WorkWithDrawingViewModel @Inject constructor(
                     }
                 }
             }
+
+            WorkWithDrawingAction.Export -> {
+                viewModelScope.launch(Dispatchers.IO) {
+
+                }
+            }
+
+            is WorkWithDrawingAction.UpdateLinesForBrokenLine -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        linesForBrokenLine = action.linesForBrokenLine
+                    )
+                }
+            }
+
+            is WorkWithDrawingAction.LoadAppWidthAndHeight -> {
+                repository.widthAndHeightApp = Pair(action.width, action.height)
+            }
+
+            is WorkWithDrawingAction.UpdateText -> _uiState.update {
+                uiState.value.copy(text = action.text)
+            }
+
+            is WorkWithDrawingAction.UpdateCoordinatesOfText -> _uiState.update {
+                uiState.value.copy(coordinatesOfText = action.coordinates)
+            }
+
+            WorkWithDrawingAction.AddText -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val text = Text(
+                        text = uiState.value.text,
+                        drawingId = uiState.value.currentDrawing.id,
+                        xInApp = uiState.value.coordinatesOfText.first,
+                        yInApp = uiState.value.coordinatesOfText.second
+                    )
+                    repository.addText(text = text)
+                    onUiAction(WorkWithDrawingAction.UpdateCoordinatesOfText(Pair(-1f, -1f)))
+                    onUiAction(WorkWithDrawingAction.UpdateText(""))
+                }
+            }
         }
+    }
+    fun areFieldsValid(): Boolean {
+        val isValidText = isValidName(
+            name = uiState.value.text,
+        )
+
+        _uiState.update {
+            uiState.value.copy(
+                isValidText = isValidText,
+            )
+        }
+
+        return isValidText
     }
 }
 
@@ -337,11 +407,17 @@ data class WorkWithDrawingUiState(
     private val _typeOfDefect: MutableStateFlow<List<TypeOfDefect>> = MutableStateFlow(listOf()),
     private val _defectsList: MutableStateFlow<List<Defect>> = MutableStateFlow(listOf()),
     private val _defectPointsList: MutableStateFlow<List<DefectPoint>> = MutableStateFlow(listOf()),
+    private val _texts: MutableStateFlow<List<Text>> = MutableStateFlow(listOf()),
 
+    val text: String = "",
+    val coordinatesOfText: Pair<Float, Float> = Pair(-1f, -1f),
+    val isValidText: Boolean = true,
+    val linesForBrokenLine: List<Pair<Offset, Offset>> = listOf(),
     val changesList: ChangesList = ChangesList(),
     val isForwardEnable: Boolean = false,
-    val isBackEnable: Boolean  = false,
+    val isBackEnable: Boolean = false,
     val typeOfDefect: StateFlow<List<TypeOfDefect>> = _typeOfDefect.asStateFlow(),
+    val texts: StateFlow<List<Text>> = _texts.asStateFlow(),
     val drawings: StateFlow<List<Drawing>> = _drawings.asStateFlow(),
     val labels: StateFlow<List<Label>> = _labels.asStateFlow(),
     val defectsList: StateFlow<List<Defect>> = _defectsList.asStateFlow(),

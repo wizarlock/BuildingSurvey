@@ -16,16 +16,16 @@ import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiSt
 
 @Composable
 fun ExportIcon(
-    uiState: WorkWithDrawingUiState
+    uiState: WorkWithDrawingUiState,
+    export: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .background(Color.Transparent)
             .clickable(
+                enabled = !uiState.drawingBrokenLine && uiState.coordinatesOfText.first == -1f && uiState.coordinatesOfText.second == -1f,
                 onClick = {
-                    if (!uiState.drawingBrokenLine) {
-                        
-                    }
+                    export()
                 }
             ),
         contentAlignment = Alignment.Center

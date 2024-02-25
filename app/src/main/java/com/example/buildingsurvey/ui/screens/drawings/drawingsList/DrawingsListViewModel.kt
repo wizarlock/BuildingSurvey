@@ -60,7 +60,10 @@ class DrawingsListViewModel @Inject constructor(
                 }
             }
 
-            is DrawingsListAction.UpdateDrawing -> repository.currentDrawing = action.drawing
+            is DrawingsListAction.UpdateDrawing -> viewModelScope.launch(Dispatchers.IO) {
+                repository.updateCurrentDrawing(drawing = action.drawing)
+            }
+
             is DrawingsListAction.UpdateAudioNum -> {
                 _uiState.update {
                     uiState.value.copy(

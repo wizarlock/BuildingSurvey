@@ -12,24 +12,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.buildingsurvey.R
-import com.example.buildingsurvey.data.model.Defect
 import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 
 @Composable
 fun BackIcon(
     uiState: WorkWithDrawingUiState,
-    removeDefect: (Defect) -> Unit
+    back: (Any) -> Unit
 ) {
     Box(
         modifier = Modifier
             .background(Color.Transparent)
             .clickable(
-                enabled = uiState.isBackEnable,
+                enabled = uiState.isBackEnable && !uiState.drawingBrokenLine && uiState.coordinatesOfText.first == -1f && uiState.coordinatesOfText.second == -1f,
                 onClick = {
-                    if (!uiState.drawingBrokenLine) {
-                        val defect = uiState.changesList.back()
-                        removeDefect(defect as Defect)
-                    }
+                    val value = uiState.changesList.back()
+                    back(value)
                 }
             ),
         contentAlignment = Alignment.Center

@@ -35,11 +35,10 @@ fun PhotoIcon(
             )
             .border(2.dp, Color.Black)
             .clickable(
+                enabled = !uiState.drawingBrokenLine && uiState.coordinatesOfText.first == -1f && uiState.coordinatesOfText.second == -1f,
                 onClick = {
-                    if (!uiState.drawingBrokenLine) {
-                        if (permissionState.hasPermission) updatePhotoMode()
-                        else permissionState.launchPermissionRequest()
-                    }
+                    if (permissionState.hasPermission) updatePhotoMode()
+                    else permissionState.launchPermissionRequest()
                 }
             ),
         contentAlignment = Alignment.Center

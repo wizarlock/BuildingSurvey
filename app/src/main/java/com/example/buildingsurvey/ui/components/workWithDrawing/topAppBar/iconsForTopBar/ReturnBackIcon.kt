@@ -23,9 +23,9 @@ fun ReturnBackIcon(
         modifier = Modifier
             .background(Color.Transparent)
             .clickable(
+                enabled = !uiState.drawingBrokenLine && uiState.coordinatesOfText.first == -1f && uiState.coordinatesOfText.second == -1f,
                 onClick = {
-                    if (!uiState.drawingBrokenLine)
-                        returnBackScale()
+                    returnBackScale()
                 }
             ),
         contentAlignment = Alignment.Center

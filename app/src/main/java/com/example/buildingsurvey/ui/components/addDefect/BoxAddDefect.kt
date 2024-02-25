@@ -40,7 +40,8 @@ fun BoxAddDefect(
                 uiAction(AddDefectAction.UpdateDefectName(text))
             },
             typeOfKeyboard = KeyboardType.Text,
-            length = 30
+            length = 30,
+            lines = 2
         )
 
         if (!(uiState.isValidDefectName && uiState.isNotRepeatDefectName))

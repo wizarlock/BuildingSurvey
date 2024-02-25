@@ -7,6 +7,7 @@ import com.example.buildingsurvey.data.model.DefectPoint
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
+import com.example.buildingsurvey.data.model.Text
 import com.example.buildingsurvey.data.model.TypeOfDefect
 import com.example.buildingsurvey.ui.screens.AudioAttachment
 import kotlinx.coroutines.flow.StateFlow
@@ -26,11 +27,18 @@ interface RepositoryInterface {
 
     val defectPointsList: StateFlow<List<DefectPoint>>
 
+    val textList: StateFlow<List<Text>>
+
+
     var currentProject: Project
 
     var currentDrawing: Drawing
 
     var currentLabel: Label
+
+    var widthAndHeightApp: Pair<Float, Float>
+
+    suspend fun updateCurrentDrawing(drawing: Drawing)
 
     suspend fun stopRecording()
 
@@ -50,7 +58,11 @@ interface RepositoryInterface {
 
     suspend fun removeDrawing(drawing: Drawing)
 
-    suspend fun addLabel(x: Float, y: Float, name: String, width: Float, height: Float)
+    suspend fun addText(text: Text)
+
+    suspend fun removeText(text: Text)
+
+    suspend fun addLabel(x: Float, y: Float, name: String)
 
     suspend fun saveLabel()
 

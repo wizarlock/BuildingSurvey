@@ -29,6 +29,7 @@ fun TextFieldForFilling(
     length: Int,
     text: String,
     isValid: Boolean,
+    lines: Int,
     onValueChange: (String) -> Unit,
     typeOfKeyboard: KeyboardType
 ) {
@@ -69,6 +70,6 @@ fun TextFieldForFilling(
         visualTransformation =
         if (typeOfKeyboard == KeyboardType.Password) PasswordVisualTransformation()
         else VisualTransformation.None,
-        maxLines = 2
+        maxLines = lines
     )
 }

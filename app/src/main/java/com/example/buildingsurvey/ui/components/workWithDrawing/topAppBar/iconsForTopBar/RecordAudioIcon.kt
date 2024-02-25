@@ -40,13 +40,12 @@ fun RecordAudioIcon(
             )
             .border(2.dp, Color.Black, CircleShape)
             .clickable(
+                enabled = !uiState.drawingBrokenLine && uiState.coordinatesOfText.first == -1f && uiState.coordinatesOfText.second == -1f,
                 onClick = {
-                    if (!uiState.drawingBrokenLine) {
-                        if (permissionState.hasPermission)
-                            if (!uiState.audioMode) startRecord()
-                            else stopRecord()
-                        else permissionState.launchPermissionRequest()
-                    }
+                    if (permissionState.hasPermission)
+                        if (!uiState.audioMode) startRecord()
+                        else stopRecord()
+                    else permissionState.launchPermissionRequest()
                 }
             ),
         contentAlignment = Alignment.Center
@@ -55,7 +54,9 @@ fun RecordAudioIcon(
             painter = if (!uiState.audioMode) painterResource(id = R.drawable.audio_start)
             else painterResource(id = R.drawable.audio_stop),
             contentDescription = "audio",
-            modifier = Modifier.size(32.dp).padding(4.dp)
+            modifier = Modifier
+                .size(32.dp)
+                .padding(4.dp)
         )
     }
 }

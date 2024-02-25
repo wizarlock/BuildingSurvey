@@ -29,9 +29,9 @@ fun SwipeIcon(
             )
             .border(2.dp, Color.Black)
             .clickable(
+                enabled = !uiState.drawingBrokenLine && uiState.coordinatesOfText.first == -1f && uiState.coordinatesOfText.second == -1f,
                 onClick = {
-                    if (!uiState.drawingBrokenLine)
-                        updateSwipeMode()
+                    updateSwipeMode()
                 }
             ),
         contentAlignment = Alignment.Center

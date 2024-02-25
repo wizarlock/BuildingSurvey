@@ -31,8 +31,6 @@ fun boxForScaleModifier(
     val currentPhotoPath = remember { mutableStateOf("") }
     val x = remember { mutableStateOf(0f) }
     val y = remember { mutableStateOf(0f) }
-    val width = remember { mutableStateOf(0f) }
-    val height = remember { mutableStateOf(0f) }
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -42,8 +40,6 @@ fun boxForScaleModifier(
                     path = currentPhotoPath.value,
                     x = x.value,
                     y = y.value,
-                    width = width.value,
-                    height = height.value
                 )
             )
         }
@@ -72,8 +68,6 @@ fun boxForScaleModifier(
                 }
                 x.value = offsetInDp.x
                 y.value = offsetInDp.y
-                width.value = size.width.toDp().value
-                height.value = size.height.toDp().value
                 val imgFile = File.createTempFile(
                     UUID.randomUUID().toString(),
                     ".jpg",

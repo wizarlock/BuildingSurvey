@@ -57,11 +57,14 @@ fun WorkWithDrawingScreen(
                 returnBackScale = {
                     viewModel.onUiAction(WorkWithDrawingAction.ReturnBackScaleAndOffset)
                 },
-                removeDefect = { defect ->
-                    viewModel.onUiAction(WorkWithDrawingAction.RemoveDefect(defect))
+                back = { value ->
+                    viewModel.onUiAction(WorkWithDrawingAction.Back(value))
                 },
-                returnDefect = { defect ->
-                    viewModel.onUiAction(WorkWithDrawingAction.ReturnDefect(defect))
+                forward = { value ->
+                    viewModel.onUiAction(WorkWithDrawingAction.Forward(value))
+                },
+                export = {
+                    viewModel.onUiAction(WorkWithDrawingAction.Export)
                 }
             )
         },
@@ -94,6 +97,76 @@ fun WorkWithDrawingScreen(
                 updatePointDefectSelected = {
                     viewModel.onUiAction(WorkWithDrawingAction.UpdatePointDefectSelected)
                 },
+                acceptForBrokenLine = {
+
+                    val allPoints =
+                        uiState.linesForBrokenLine.flatMap { listOf(it.first, it.second) }
+                    val result = mutableListOf(allPoints[0])
+                    for (i in 1 until allPoints.size) {
+                        if (allPoints[i] != allPoints[i - 1]) {
+                            result.add(allPoints[i])
+                        }
+                    }
+                    viewModel.onUiAction(
+                        WorkWithDrawingAction.AddDefect(
+                            isClosed = false,
+                            points = result
+                        )
+                    )
+                    viewModel.onUiAction(
+                        WorkWithDrawingAction.UpdateLinesForBrokenLine(
+                            linesForBrokenLine = listOf()
+                        )
+                    )
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateDrawingBrokenLine(isDrawing = false))
+                },
+                declineForBrokenLine = {
+                    viewModel.onUiAction(
+                        WorkWithDrawingAction.UpdateLinesForBrokenLine(
+                            linesForBrokenLine = listOf()
+                        )
+                    )
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateDrawingBrokenLine(isDrawing = false))
+                },
+                connect = {
+                    val allPoints =
+                        uiState.linesForBrokenLine.flatMap { listOf(it.first, it.second) }
+                    val result = mutableListOf(allPoints[0])
+                    for (i in 1 until allPoints.size) {
+                        if (allPoints[i] != allPoints[i - 1]) {
+                            result.add(allPoints[i])
+                        }
+                    }
+                    viewModel.onUiAction(
+                        WorkWithDrawingAction.AddDefect(
+                            isClosed = true,
+                            points = result
+                        )
+                    )
+                    viewModel.onUiAction(
+                        WorkWithDrawingAction.UpdateLinesForBrokenLine(
+                            linesForBrokenLine = listOf()
+                        )
+                    )
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateDrawingBrokenLine(isDrawing = false))
+                },
+                acceptForText = {
+                    if (viewModel.areFieldsValid()) {
+                        viewModel.onUiAction( WorkWithDrawingAction.AddText)
+                    }
+                },
+                declineForText = {
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateText(""))
+                    viewModel.onUiAction(
+                        WorkWithDrawingAction.UpdateCoordinatesOfText(
+                            Pair(-1f, -1f)
+                        )
+                    )
+                },
+
+                textChange = { text ->
+                    viewModel.onUiAction(WorkWithDrawingAction.UpdateText(text))
+                }
             )
         }
     )

@@ -40,9 +40,9 @@ fun SelectDrawingIcon(
             modifier = Modifier
                 .background(Color.Transparent)
                 .clickable(
+                    enabled = !uiState.drawingBrokenLine && uiState.coordinatesOfText.first == -1f && uiState.coordinatesOfText.second == -1f,
                     onClick = {
-                        if (!uiState.drawingBrokenLine)
-                            expanded = !expanded
+                        expanded = !expanded
                     }
                 ),
             contentAlignment = Alignment.Center

@@ -26,6 +26,7 @@ import com.example.buildingsurvey.data.model.DefectPoint
 import com.example.buildingsurvey.data.model.Drawing
 import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.data.model.Project
+import com.example.buildingsurvey.data.model.Text
 import com.example.buildingsurvey.data.model.TypeOfDefect
 import com.example.buildingsurvey.ui.screens.AudioAttachment
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
@@ -68,7 +69,9 @@ class Repository @Inject constructor(
     private val _typeOfDefectList: MutableStateFlow<List<TypeOfDefect>> = MutableStateFlow(listOf())
     private val _defectsList: MutableStateFlow<List<Defect>> = MutableStateFlow(listOf())
     private val _defectPointsList: MutableStateFlow<List<DefectPoint>> = MutableStateFlow(listOf())
+    private val _textList: MutableStateFlow<List<Text>> = MutableStateFlow(listOf())
     private var recorder: MediaRecorder? = null
+    private var widthAndHeight = Pair(0, 0)
 
     override val projectsList = _projectsList.asStateFlow()
     override val drawingsList = _drawingsList.asStateFlow()
@@ -77,9 +80,12 @@ class Repository @Inject constructor(
     override val defectsList = _defectsList.asStateFlow()
     override val defectPointsList = _defectPointsList.asStateFlow()
     override val typeOfDefectList = _typeOfDefectList.asStateFlow()
+    override val textList = _textList.asStateFlow()
+    override var widthAndHeightApp = Pair(0f, 0f)
 
     override var currentProject = Project()
     override var currentDrawing = Drawing()
+
     override var currentLabel = Label()
 
     private var tempFile: File? = null
@@ -93,6 +99,14 @@ class Repository @Inject constructor(
             _labelsList.value = labelDao.getAllLabels().map { it.toLabel() }
             _typeOfDefectList.value = typeOfDefectDao.getAllTypes().map { it.toTypeOfDefect() }
         }
+    }
+
+    override suspend fun updateCurrentDrawing(drawing: Drawing) {
+        currentDrawing = drawing
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(drawing.drawingFilePath, options)
+        widthAndHeight = Pair(options.outWidth, options.outHeight)
     }
 
     override suspend fun addProject(project: Project, isFileExists: Boolean) =
@@ -237,10 +251,10 @@ class Repository @Inject constructor(
             }
         }
 
-    override suspend fun addLabel(x: Float, y: Float, name: String, width: Float, height: Float) =
+    override suspend fun addLabel(x: Float, y: Float, name: String) =
         withContext(Dispatchers.IO) {
             val fileName = "$name.jpg"
-            val widthAndHeight = saveLabelFile(fileName)
+            saveLabelFile(fileName)
 
             val label = Label(
                 name = name,
@@ -248,8 +262,8 @@ class Repository @Inject constructor(
                 drawingId = currentDrawing.id,
                 xInApp = x,
                 yInApp = y,
-                xReal = (widthAndHeight.first / width) * x,
-                yReal = (widthAndHeight.second / height) * y
+                xReal = (widthAndHeight.first / widthAndHeightApp.first) * x,
+                yReal = (widthAndHeight.second / widthAndHeightApp.second) * y
             )
             labelDao.insert(label.toLabelDbEntity())
             _labelsList.update { currentList ->
@@ -259,15 +273,11 @@ class Repository @Inject constructor(
             }
         }
 
-    private suspend fun saveLabelFile(fileName: String): Pair<Int, Int> {
+    private suspend fun saveLabelFile(fileName: String) {
         val outputFile = File(outputDir, fileName)
         tempFile = Compressor.compress(applicationContext, tempFile!!)
         FileUtils.copyFile(tempFile, outputFile)
         tempFile!!.delete()
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(currentDrawing.drawingFilePath, options)
-        return Pair(options.outWidth, options.outHeight)
     }
 
     override suspend fun addDefect(defect: Defect, points: List<DefectPoint>) =
@@ -277,6 +287,11 @@ class Repository @Inject constructor(
                 updatedList.add(defect)
                 updatedList.toList()
             }
+            points.forEach { point ->
+                point.xReal = (widthAndHeight.first / widthAndHeightApp.first) * point.xInApp
+                point.yReal = (widthAndHeight.second / widthAndHeightApp.second) * point.yInApp
+            }
+
             _defectPointsList.update { currentList ->
                 val updatedList = currentList.toMutableList()
                 points.forEach { point ->
@@ -315,6 +330,25 @@ class Repository @Inject constructor(
                 val updatedList = currentList.toMutableList()
                 updatedList.add(typeOfDefect)
                 updatedList.toList()
+            }
+        }
+
+
+    override suspend fun addText(text: Text) =
+        withContext(Dispatchers.IO) {
+            text.xReal = (widthAndHeight.first / widthAndHeightApp.first) * text.xInApp
+            text.yReal = (widthAndHeight.second / widthAndHeightApp.second) * text.yInApp
+            _textList.update { currentList ->
+                val updatedList = currentList.toMutableList()
+                updatedList.add(text)
+                updatedList.toList()
+            }
+        }
+
+    override suspend fun removeText(text: Text) =
+        withContext(Dispatchers.IO) {
+            _textList.update { currentList ->
+                currentList.filterNot { it == text }
             }
         }
 

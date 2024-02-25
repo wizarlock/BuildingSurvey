@@ -40,7 +40,8 @@ fun BoxAddProject(
                 uiAction(AddProjectAction.UpdateProjectName(text))
             },
             typeOfKeyboard = KeyboardType.Text,
-            length = 60
+            length = 60,
+            lines = 2
         )
 
         if (!(uiState.isValidProjectName && uiState.isNotRepeatProjectName))
