@@ -379,6 +379,13 @@ class WorkWithDrawingViewModel @Inject constructor(
                         yInApp = uiState.value.coordinatesOfText.second
                     )
                     repository.addText(text = text)
+                    uiState.value.changesList.add(value = text)
+                    _uiState.update {
+                        uiState.value.copy(
+                            isForwardEnable = uiState.value.changesList.forwardIsAvailable(),
+                            isBackEnable = uiState.value.changesList.backIsAvailable()
+                        )
+                    }
                     onUiAction(WorkWithDrawingAction.UpdateCoordinatesOfText(Pair(-1f, -1f)))
                     onUiAction(WorkWithDrawingAction.UpdateText(""))
                 }

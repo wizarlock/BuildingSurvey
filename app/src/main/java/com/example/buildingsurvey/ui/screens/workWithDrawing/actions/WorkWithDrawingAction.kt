@@ -15,7 +15,7 @@ sealed class WorkWithDrawingAction {
 
     data class UpdateScaleAndOffset (val pan: Offset, val zoom: Float) : WorkWithDrawingAction()
 
-    data class AddDefect (val isClosed: Boolean, val points: List<Offset>) : WorkWithDrawingAction()
+    data class AddDefect (val isClosed: Int, val points: List<Offset>) : WorkWithDrawingAction()
 
     data class Forward (val value: Any) : WorkWithDrawingAction()
 

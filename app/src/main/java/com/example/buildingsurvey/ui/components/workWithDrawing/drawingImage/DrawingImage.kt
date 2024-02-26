@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,7 +27,6 @@ import com.example.buildingsurvey.data.model.Label
 import com.example.buildingsurvey.ui.screens.workWithDrawing.WorkWithDrawingUiState
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun DrawingImage(
     uiState: WorkWithDrawingUiState,
@@ -37,7 +35,6 @@ fun DrawingImage(
 ) {
     val defectsList = uiState.defectsList.collectAsState().value
     val defectPoints = uiState.defectPointsList.collectAsState().value
-    val textList = uiState.texts.collectAsState().value
     val density = LocalDensity.current
 
     Box(
@@ -178,7 +175,7 @@ fun DrawingImage(
                                     ),
                                     strokeWidth = 2f
                                 )
-                            if (defect.isClosed)
+                            if (defect.isClosed == 1)
                                 drawLine(
                                     color = Color(android.graphics.Color.parseColor(defect.hexCode)),
                                     start = Offset(

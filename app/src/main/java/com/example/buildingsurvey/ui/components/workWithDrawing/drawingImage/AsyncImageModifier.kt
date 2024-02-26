@@ -37,7 +37,7 @@ fun asyncImageModifier(
 
                     uiAction(
                         WorkWithDrawingAction.AddDefect(
-                            isClosed = false,
+                            isClosed = 0,
                             points = listOf(point)
                         )
                     )
@@ -57,7 +57,7 @@ fun asyncImageModifier(
                         firstPoint.value = null
                         uiAction(
                             WorkWithDrawingAction.AddDefect(
-                                isClosed = false,
+                                isClosed = 0,
                                 points = listOf(frPoint, point),
                             )
                         )
@@ -98,7 +98,7 @@ fun asyncImageModifier(
                         val fourPoint = Offset(point.x, frPoint.y)
                         uiAction(
                             WorkWithDrawingAction.AddDefect(
-                                isClosed = true,
+                                isClosed = 1,
                                 points = listOf(frPoint, scPoint, point, fourPoint),
                             )
                         )

@@ -109,7 +109,7 @@ fun WorkWithDrawingScreen(
                     }
                     viewModel.onUiAction(
                         WorkWithDrawingAction.AddDefect(
-                            isClosed = false,
+                            isClosed = 0,
                             points = result
                         )
                     )
@@ -139,7 +139,7 @@ fun WorkWithDrawingScreen(
                     }
                     viewModel.onUiAction(
                         WorkWithDrawingAction.AddDefect(
-                            isClosed = true,
+                            isClosed = 1,
                             points = result
                         )
                     )

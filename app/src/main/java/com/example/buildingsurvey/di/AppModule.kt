@@ -5,9 +5,12 @@ import com.example.buildingsurvey.data.RepositoryInterface
 import com.example.buildingsurvey.data.Repository
 import com.example.buildingsurvey.data.db.AppDatabase
 import com.example.buildingsurvey.data.db.dao.AudioDao
+import com.example.buildingsurvey.data.db.dao.DefectDao
+import com.example.buildingsurvey.data.db.dao.DefectPointDao
 import com.example.buildingsurvey.data.db.dao.DrawingDao
 import com.example.buildingsurvey.data.db.dao.LabelDao
 import com.example.buildingsurvey.data.db.dao.ProjectDao
+import com.example.buildingsurvey.data.db.dao.TextDao
 import com.example.buildingsurvey.data.db.dao.TypeOfDefectDao
 import dagger.Binds
 import dagger.Module
@@ -60,6 +63,24 @@ interface AppModule {
         @Provides
         fun provideTypeOfDefectDao(database: AppDatabase): TypeOfDefectDao {
             return database.getTypeOfDefectDao()
+        }
+
+        @Singleton
+        @Provides
+        fun provideDefectDao(database: AppDatabase): DefectDao {
+            return database.getDefectDao()
+        }
+
+        @Singleton
+        @Provides
+        fun provideDefectPointDao(database: AppDatabase): DefectPointDao {
+            return database.getDefectPointDao()
+        }
+
+        @Singleton
+        @Provides
+        fun provideTextDao(database: AppDatabase): TextDao {
+            return database.getTextDao()
         }
     }
 }

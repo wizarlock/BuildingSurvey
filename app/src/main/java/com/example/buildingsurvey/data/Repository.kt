@@ -16,9 +16,12 @@ import android.os.ParcelFileDescriptor
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
 import com.example.buildingsurvey.data.db.dao.AudioDao
+import com.example.buildingsurvey.data.db.dao.DefectDao
+import com.example.buildingsurvey.data.db.dao.DefectPointDao
 import com.example.buildingsurvey.data.db.dao.DrawingDao
 import com.example.buildingsurvey.data.db.dao.LabelDao
 import com.example.buildingsurvey.data.db.dao.ProjectDao
+import com.example.buildingsurvey.data.db.dao.TextDao
 import com.example.buildingsurvey.data.db.dao.TypeOfDefectDao
 import com.example.buildingsurvey.data.model.Audio
 import com.example.buildingsurvey.data.model.Defect
@@ -32,12 +35,18 @@ import com.example.buildingsurvey.ui.screens.AudioAttachment
 import com.example.buildingsurvey.ui.screens.workWithDrawing.actions.WorkWithDrawingAction
 import com.example.buildingsurvey.utils.toAudio
 import com.example.buildingsurvey.utils.toAudioDbEntity
+import com.example.buildingsurvey.utils.toDefect
+import com.example.buildingsurvey.utils.toDefectDbEntity
+import com.example.buildingsurvey.utils.toDefectPoint
+import com.example.buildingsurvey.utils.toDefectPointDbEntity
 import com.example.buildingsurvey.utils.toDrawing
 import com.example.buildingsurvey.utils.toDrawingDbEntity
 import com.example.buildingsurvey.utils.toLabel
 import com.example.buildingsurvey.utils.toLabelDbEntity
 import com.example.buildingsurvey.utils.toProject
 import com.example.buildingsurvey.utils.toProjectDbEntity
+import com.example.buildingsurvey.utils.toText
+import com.example.buildingsurvey.utils.toTextDbEntity
 import com.example.buildingsurvey.utils.toTypeOfDefect
 import com.example.buildingsurvey.utils.toTypeOfDefectDbEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -60,8 +69,12 @@ class Repository @Inject constructor(
     private val drawingDao: DrawingDao,
     private val audioDao: AudioDao,
     private val labelDao: LabelDao,
-    private val typeOfDefectDao: TypeOfDefectDao
-) : RepositoryInterface {
+    private val typeOfDefectDao: TypeOfDefectDao,
+    private val defectDao: DefectDao,
+    private val defectPointDao: DefectPointDao,
+    private val textDao: TextDao,
+
+    ) : RepositoryInterface {
     private val _projectsList: MutableStateFlow<List<Project>> = MutableStateFlow(listOf())
     private val _audioList: MutableStateFlow<List<Audio>> = MutableStateFlow(listOf())
     private val _drawingsList: MutableStateFlow<List<Drawing>> = MutableStateFlow(listOf())
@@ -98,6 +111,9 @@ class Repository @Inject constructor(
             _audioList.value = audioDao.getAllAudio().map { it.toAudio() }
             _labelsList.value = labelDao.getAllLabels().map { it.toLabel() }
             _typeOfDefectList.value = typeOfDefectDao.getAllTypes().map { it.toTypeOfDefect() }
+            _defectsList.value = defectDao.getAllDefects().map { it.toDefect() }
+            _defectPointsList.value = defectPointDao.getAllDefectPoints().map { it.toDefectPoint() }
+            _textList.value = textDao.getAllTexts().map { it.toText() }
         }
     }
 
@@ -287,9 +303,13 @@ class Repository @Inject constructor(
                 updatedList.add(defect)
                 updatedList.toList()
             }
+            defectDao.insert(defect.toDefectDbEntity())
             points.forEach { point ->
                 point.xReal = (widthAndHeight.first / widthAndHeightApp.first) * point.xInApp
                 point.yReal = (widthAndHeight.second / widthAndHeightApp.second) * point.yInApp
+            }
+            points.forEach { point ->
+                defectPointDao.insert(point.toDefectPointDbEntity())
             }
 
             _defectPointsList.update { currentList ->
@@ -303,9 +323,18 @@ class Repository @Inject constructor(
 
     override suspend fun removeDefect(defect: Defect) =
         withContext(Dispatchers.IO) {
+            defectDao.delete(defect.toDefectDbEntity())
+            val pointsToDelete = _defectPointsList.value.filter { it.defectId == defect.id }
+            pointsToDelete.forEach { point ->
+                defectPointDao.delete(point.toDefectPointDbEntity())
+                _defectPointsList.update { currentList ->
+                    currentList.filterNot { it == point }
+                }
+            }
             _defectsList.update { currentList ->
                 currentList.filterNot { it == defect }
             }
+
         }
 
     override suspend fun saveLabel() {
@@ -338,6 +367,7 @@ class Repository @Inject constructor(
         withContext(Dispatchers.IO) {
             text.xReal = (widthAndHeight.first / widthAndHeightApp.first) * text.xInApp
             text.yReal = (widthAndHeight.second / widthAndHeightApp.second) * text.yInApp
+            textDao.insert(text.toTextDbEntity())
             _textList.update { currentList ->
                 val updatedList = currentList.toMutableList()
                 updatedList.add(text)
@@ -347,6 +377,7 @@ class Repository @Inject constructor(
 
     override suspend fun removeText(text: Text) =
         withContext(Dispatchers.IO) {
+            textDao.delete(text.toTextDbEntity())
             _textList.update { currentList ->
                 currentList.filterNot { it == text }
             }
