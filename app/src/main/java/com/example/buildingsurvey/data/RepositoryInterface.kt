@@ -73,4 +73,6 @@ interface RepositoryInterface {
     suspend fun loadDataFromDB()
 
     suspend fun addDefect(defect: Defect, points: List<DefectPoint>)
+
+    suspend fun export()
 }

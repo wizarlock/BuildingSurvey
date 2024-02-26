@@ -59,6 +59,7 @@ import kotlinx.coroutines.withContext
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.FileOutputStream
+import java.io.FileWriter
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
@@ -426,6 +427,84 @@ class Repository @Inject constructor(
                 }
             }
             recorder = null
+        }
+    }
+
+    override suspend fun export() {
+        val directoryPath = File(
+            outputDir,
+            "Export"
+        )
+        if (!directoryPath.exists()) {
+            directoryPath.mkdirs()
+        }
+        val fileName = currentDrawing.name + ".txt"
+        val file = File(directoryPath, fileName)
+        file.createNewFile()
+        try {
+            val writer = FileWriter(file)
+            writer.append(projectsList.value.find { it.id == currentDrawing.projectId }!!.name)
+            writer.appendLine()
+            writer.append(currentDrawing.name)
+            writer.appendLine()
+            _audioList.value.filter { it.drawingId == currentDrawing.id }.forEach { audio ->
+                writer.append("Аудио: " + audio.name + ".3gp")
+                writer.appendLine()
+            }
+            _labelsList.value.filter { it.drawingId == currentDrawing.id }.forEach { label ->
+                writer.append("Фото: (" + label.xReal + "/" + label.yReal + "), " + label.name)
+                writer.appendLine()
+            }
+            _defectsList.value.filter { it.drawingId == currentDrawing.id }.forEach { defect ->
+                val list = _defectPointsList.value.filter { it.defectId == defect.id }
+                val nameColor = if (defect.hexCode == "#FF000000") "0 "
+                    else _typeOfDefectList.value.find { it.hexCode == defect.hexCode }!!.name
+                when (list.size) {
+                    1 -> {
+                        writer.append("Точечный дефект: (" + list.first().xReal + "/" + list.first().yReal + "), " + nameColor + "_" + defect.hexCode)
+                        writer.appendLine()
+                    }
+
+                    2 -> {
+                        writer.append("Линия: (" + list.first().xReal + "/" + list.first().yReal + "; " + list.last().xReal + "/" + list.last().yReal + "), " + nameColor + "_" + defect.hexCode)
+                        writer.appendLine()
+                    }
+
+                    4 -> {
+                        if (defect.isClosed == 1 && (list[1].xReal == list.first().xReal && list[1].yReal == list[2].yReal) && (list.last().xReal == list[2].xReal && list.last().yReal == list.first().yReal))
+                            writer.append("Прямоугольник: (")
+                        else if (defect.isClosed == 1) writer.append("Замкнутая ломанная линия: (")
+                        else writer.append("Ломанная линия: (")
+                        for (i in list.indices) {
+                            writer.append(list[i].xReal.toString() + "/" + list[i].yReal)
+                            if (i != list.size - 1)
+                                writer.append("; ")
+                        }
+                        writer.append("), " + nameColor + "_" + defect.hexCode)
+                        writer.appendLine()
+                    }
+
+                    else -> {
+                        if (defect.isClosed == 1) writer.append("Замкнутая ломанная линия: (")
+                        else writer.append("Ломанная линия: (")
+                        for (i in list.indices) {
+                            writer.append(list[i].xReal.toString() + "/" + list[i].yReal)
+                            if (i != list.size - 1)
+                                writer.append("; ")
+                        }
+                        writer.append("), " + nameColor + "_" + defect.hexCode)
+                        writer.appendLine()
+                    }
+                }
+            }
+            _textList.value.filter { it.drawingId == currentDrawing.id }.forEach { text ->
+                writer.append("Текст: (${text.xReal}/${text.yReal}), \"${text.text}\"")
+                writer.appendLine()
+            }
+            writer.flush()
+            writer.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 }

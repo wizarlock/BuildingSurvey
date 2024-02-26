@@ -60,7 +60,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun getDatabaseInstance(context: Context): AppDatabase {
             return if (database == null) {
                 synchronized(this) {
-                    Room.databaseBuilder(context, AppDatabase::class.java, "database.db")
+                    Room.databaseBuilder(context, AppDatabase::class.java, "checkpoint_database.db")
                         .createFromAsset("checkpoint_database.db")
                         .build()
                 }

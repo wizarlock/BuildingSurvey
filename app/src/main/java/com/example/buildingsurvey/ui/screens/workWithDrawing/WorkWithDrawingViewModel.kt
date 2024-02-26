@@ -346,7 +346,7 @@ class WorkWithDrawingViewModel @Inject constructor(
 
             WorkWithDrawingAction.Export -> {
                 viewModelScope.launch(Dispatchers.IO) {
-
+                    repository.export()
                 }
             }
 

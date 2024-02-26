@@ -46,4 +46,5 @@
     <string name="repeat_defect_color">Данный цвет уже используется</string>
     <string name="add_defect">Добавить дефект</string>
     <string name="text">Текст</string>
+    <string name="export">Чертеж успешно экспортирован</string>
 </resources>

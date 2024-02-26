@@ -30,6 +30,8 @@ fun WorkWithDrawingScreen(
     val context = LocalContext.current
     val start = stringResource(id = R.string.audio_start)
     val stop = stringResource(id = R.string.audio_stop)
+    val export = stringResource(id = R.string.export)
+
 
     Scaffold(
         topBar = {
@@ -64,6 +66,7 @@ fun WorkWithDrawingScreen(
                     viewModel.onUiAction(WorkWithDrawingAction.Forward(value))
                 },
                 export = {
+                    Toast.makeText(context, export, Toast.LENGTH_SHORT).show()
                     viewModel.onUiAction(WorkWithDrawingAction.Export)
                 }
             )
